@@ -21,19 +21,39 @@ const Home = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen">
-      <section className="relative h-[500px] bg-gradient-to-r from-green-600 to-green-400">
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative max-w-7xl mx-auto px-4 h-full flex items-center">
-          <div className="text-white space-y-6 max-w-2xl">
-            <h1 className='text-4xl font-bold'>Hai, Selamat Datang di</h1>
-            <h1 className="text-5xl font-bold">Website {schoolInfo.name}</h1>
-            <p className="text-xl">{schoolInfo.description}</p>
-            <Link
-              href="/configure/quiz"
-              className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg"
-            >
-              Mulai Kuis Interaktif
-            </Link>
+      {/* bg-gradient-to-r from-green-600 to-green-400 */}
+      <section className="bg-white py-16 min-h-[500px]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Text Content */}
+            <div className="text-zinc-600 space-y-6">
+              <h1 className="text-blue-700 text-3xl xl:text-4xl md:text-left text-center font-bold">
+                Hai, Selamat Datang di
+              </h1>
+              <h2 className="text-blue-500 text-4xl md:text-left text-center xl:text-5xl font-bold">
+                Website {schoolInfo.name}
+              </h2>
+              <p className="text-lg sm:text-xl md:text-left text-center leading-relaxed">
+                {schoolInfo.description}
+              </p>
+              <div className="pt-4 md:text-left text-center">
+                <Link
+                  href="/configure/quiz"
+                  className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 sm:px-8 py-3 rounded-lg transition-colors shadow-lg"
+                >
+                  Mulai Kuis Interaktif
+                </Link>
+              </div>
+            </div>
+
+            {/* Image */}
+            <div className="hidden md:flex justify-center lg:justify-end">
+              <img
+                src="https://cdn3d.iconscout.com/3d/premium/thumb/study-3d-icon-download-in-png-blend-fbx-gltf-file-formats--reading-writing-read-education-school-pack-university-icons-8944449.png?f=webp"
+                alt="Study Illustration"
+                className="w-4/5 lg:w-[70%] h-auto object-contain"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -44,8 +64,8 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {schoolInfo.stats.map((stat, index) => (
               <div key={index} className="text-center p-6 rounded-lg bg-slate-50 shadow-sm">
-                <div className="text-3xl font-bold text-green-600">{stat.value}</div>
-                <div className="text-slate-600">{stat.label}</div>
+                <div className="text-3xl font-bold text-blue-500">{stat.value}</div>
+                <div className="text-blue-400">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -55,11 +75,11 @@ const Home = () => {
       {/* Facilities Section */}
       <section className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Fasilitas Unggulan</h2>
+          <h2 className="text-3xl text-zinc-600 font-bold text-center mb-12">Fasilitas Unggulan</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {schoolInfo.facilities.map((facility, index) => (
               <div key={index} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                   <div className="text-green-600 text-xl">✓</div>
                 </div>
                 <h3 className="font-semibold text-lg mb-2">{facility}</h3>
@@ -72,7 +92,7 @@ const Home = () => {
       {/* Gallery Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Galeri Sekolah</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-zinc-600 ">Galeri Sekolah</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((_, index) => (
               <div key={index} className="aspect-video bg-slate-200 rounded-lg overflow-hidden">
@@ -87,13 +107,13 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-green-500">
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-400 mb-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Siap Untuk Mengikuti Kuis?</h2>
           <p className="text-white mb-8 text-lg">Uji pemahaman Anda dengan kuis interaktif kami</p>
           <Link
             href="/configure/quiz"
-            className="inline-block bg-white text-green-600 font-semibold px-8 py-3 rounded-lg hover:bg-green-50 transition-colors shadow-lg"
+            className="inline-block bg-white text-blue-500 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors shadow-lg"
           >
             Mulai Kuis Sekarang
           </Link>
@@ -101,7 +121,7 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-800 text-slate-300 py-12">
+      <footer className="bg-blue-950 text-slate-300 py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>

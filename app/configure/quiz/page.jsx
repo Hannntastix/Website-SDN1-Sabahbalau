@@ -662,14 +662,14 @@ const QuizApp = () => {
                                 onClick={() => setPage('quizList')}
                                 className="bg-blue-950 hover:bg-blue-700"
                             >
-                                Back to Quiz List
+                                Kembali ke Halaman Daftar Soal
                             </Button>
                             <Button
                                 onClick={() => setPage('review')}
                                 variant="outline"
                                 className="border-blue-600 text-blue-600 hover:bg-blue-50"
                             >
-                                Review Answers
+                                Review Jawaban
                             </Button>
                         </div>
                     </CardContent>

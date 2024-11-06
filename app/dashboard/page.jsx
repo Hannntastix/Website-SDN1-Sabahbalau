@@ -287,7 +287,7 @@ const SchoolWebsiteDashboard = () => {
         <Link
           onClick={handleSubmit}
           href="/"
-          className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg"
+          className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg"
         >
           Simpan Perubahan
         </Link>

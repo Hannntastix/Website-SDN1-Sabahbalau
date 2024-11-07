@@ -1,23 +1,19 @@
-import React from 'react';
+"use client"
+
+import React, { useEffect, useState } from 'react';
+import { getSchoolInfo } from '../utlis/localStorage';
+import { defaultSchoolInfo } from './components/DefaultSchoolInfo';
 import Link from 'next/link';
 
 const Home = () => {
-  const schoolInfo = {
-    name: "SD Negeri 1 SabahBalau",
-    description: "Mendidik generasi masa depan dengan nilai-nilai unggul, kreativitas, dan inovasi. Kami berkomitmen untuk memberikan pendidikan berkualitas yang membentuk karakter siswa.",
-    stats: [
-      { label: "Siswa Aktif", value: "1,200+" },
-      { label: "Guru & Staff", value: "100+" },
-      { label: "Program Unggulan", value: "15+" },
-      { label: "Prestasi", value: "50+" }
-    ],
-    facilities: [
-      "Ruang Belajar yang layak",
-      "Perpustakaan",
-      "Lapangan Olahraga",
-      "Fasilitas Ekstrakurikuler"
-    ]
-  };
+  const [schoolInfo, setSchoolInfo] = useState(defaultSchoolInfo);
+
+  useEffect(() => {
+    const savedInfo = getSchoolInfo();
+    if (savedInfo) {
+      setSchoolInfo(savedInfo);
+    }
+  }, []);
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -25,7 +21,6 @@ const Home = () => {
       <section className="bg-white py-16 min-h-[500px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Text Content */}
             <div className="text-zinc-600 space-y-6">
               <h1 className="text-blue-700 text-3xl xl:text-4xl md:text-left text-center font-bold">
                 Hai, Selamat Datang di

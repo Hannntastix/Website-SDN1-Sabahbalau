@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Timer, Book, AlignLeft } from 'lucide-react';
+import { PlusCircle, Timer, CheckCircle2, XCircle, Book, ArrowLeft, ListOrdered, AlignLeft } from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -37,6 +37,7 @@ const QuizApp = () => {
     const [timeLeft, setTimeLeft] = useState(0);
     const [userAnswers, setUserAnswers] = useState({});
     const [selectedGrade, setSelectedGrade] = useState('4');
+    const [score, setScore] = useState(null);
 
     const addQuiz = (newQuiz) => {
         setQuizzes(prevQuizzes => [...prevQuizzes, newQuiz]);
@@ -83,172 +84,192 @@ const QuizApp = () => {
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
-    const QuizList = () => (
-        <div className="p-6">
-            <div className="md:justify-end flex justify-center  items-center mb-6">
-                <Button
-                    onClick={() => setPage('createQuestion')}
-                    className="bg-blue-950 flex items-center gap-2"
-                >
-                    <PlusCircle className="w-4 h-4" />
-                    Tambah Paket Soal
-                </Button>
-            </div>
-
-            <div className="max-w-7xl mx-auto px-4">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-slate-600 mb-4">Daftar Paket Soal</h1>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                        Pilih paket soal sesuai dengan tingkat kelas dan mata pelajaran yang ingin anda pelajari
-                    </p>
+    const QuizList = ({ score }) => {
+        return (
+            <div className="p-6">
+                <div className="md:justify-end flex justify-center  items-center mb-6">
+                    <Button
+                        onClick={() => setPage('createQuestion')}
+                        className="bg-blue-950 flex items-center gap-2"
+                    >
+                        <PlusCircle className="w-4 h-4" />
+                        Tambah Paket Soal
+                    </Button>
                 </div>
 
-                {/* Grade Selection */}
-                <div className="flex justify-center mb-8">
-                    <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
-                        {['4', '5', '6'].map((grade) => (
-                            <button
-                                key={grade}
-                                className={`px-8 py-2 rounded-md text-sm font-medium transition-colors
-                  ${selectedGrade === grade
-                                        ? 'bg-blue-800 text-white'
-                                        : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                                onClick={() => setSelectedGrade(grade)}
-                            >
-                                Kelas {grade}
-                            </button>
-                        ))}
+                <div className="max-w-7xl mx-auto px-4">
+                    {/* Header */}
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-bold text-slate-600 mb-4">Daftar Paket Soal</h1>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            Pilih paket soal sesuai dengan tingkat kelas dan mata pelajaran yang ingin anda pelajari
+                        </p>
                     </div>
-                </div>
 
-                {/* Quiz Grid */}
-                {quizzes.length > 0 ? (
-                    <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {quizzes.map((quiz) => (
-                                <div
-                                    key={quiz.id}
-                                    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 relative"
+                    {/* Grade Selection */}
+                    <div className="flex justify-center mb-8">
+                        <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
+                            {['4', '5', '6'].map((grade) => (
+                                <button
+                                    key={grade}
+                                    className={`px-8 py-2 rounded-md text-sm font-medium transition-colors
+                  ${selectedGrade === grade
+                                            ? 'bg-blue-800 text-white'
+                                            : 'text-gray-500 hover:text-gray-700'
+                                        }`}
+                                    onClick={() => setSelectedGrade(grade)}
                                 >
-                                    {/* Subject Badge */}
-                                    <div className="flex justify-between items-start mb-4">
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                            {quiz.description}
-                                        </span>
-                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(quiz.difficulty)}`}>
-                                            {quiz.difficulty}
-                                        </span>
-                                    </div>
-
-                                    {/* Quiz Info */}
-                                    <h3 className="text-xl font-semibold text-gray-800 mb-4">{quiz.title}</h3>
-
-                                    <div className="space-y-2 mb-6">
-                                        <div className="flex items-center text-gray-600">
-                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span>{quiz.duration} Menit</span>
-                                        </div>
-                                        <div className="flex items-center text-gray-600">
-                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span>{quiz.questions.length} Pertanyaan</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Action Buttons */}
-                                    <div className="flex space-x-4">
-                                        <button
-                                            className="flex-1 text-center bg-blue-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-                                            onClick={() => {
-                                                setCurrentQuiz(quiz);
-                                                setTimeLeft(quiz.duration * 60);
-                                                setCurrentQuestion(0);
-                                                setPage('takeQuiz');
-                                            }}
-                                        >
-                                            Mulai Kuis
-                                        </button>
-                                        <button
-                                            className="flex-1 text-center bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-                                            onClick={() => {
-                                                const confirmed = window.confirm("Apakah Anda yakin ingin menghapus soal ini?");
-                                                if (confirmed) {
-                                                    setQuizzes(prevQuizzes => prevQuizzes.filter(q => q.id !== quiz.id));
-                                                }
-                                            }}
-                                        >
-                                            Hapus
-                                        </button>
-                                    </div>
-                                </div>
+                                    Kelas {grade}
+                                </button>
                             ))}
                         </div>
+                    </div>
 
-                    </>
-                ) : (
-                    <>
-                        <div className="grid grid-cols-1 gap-3">
-                            <h1 className='text-2xl text-black text-center mx-auto font-semibold mt-5 mb-5'>Anda Belum Menambahkan Paket Soal</h1>
-                            <Button
-                                onClick={() => setPage('createQuestion')}
-                                className="bg-blue-950 flex items-center justify-center mx-auto h-15 w-20"
-                            >
-                                <p className='text-5xl text-center mb-3'>+</p>
-                            </Button>
-                            <p className='text-center font-semibold text-xl text-slate-500'>Tambah Paket Soal</p>
-                        </div>
-                    </>
-                )}
-            </div>
+                    {/* Quiz Grid */}
+                    {quizzes.length > 0 ? (
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {quizzes.map((quiz) => (
+                                    <div
+                                        key={quiz.id}
+                                        className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 relative"
+                                    >
+                                        {/* Subject Badge */}
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                                {quiz.description}
+                                            </span>
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(quiz.difficulty)}`}>
+                                                {quiz.difficulty}
+                                            </span>
+                                        </div>
 
-            <div className='max-w-7xl mx-auto px-4'>
-                {/* Info Section */}
-                <div className="mt-12 bg-white rounded-xl p-6 shadow-sm">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Informasi Quiz</h2>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        <div className="flex items-start space-x-3">
-                            <div className="flex-shrink-0">
-                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                        {/* Quiz Info */}
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">{quiz.title}</h3>
+
+                                        {showResults ? (
+                                            <>
+                                                {score < 65 ? (
+                                                    <>
+                                                        <p className=' font-semibold text-red-800'>Nilai terakhir: {score}</p>
+                                                        <p className='mb-2 font-normal text-red-800'>Ayo tingkatkan lagi nilaimu!</p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <p className=' font-semibold text-blue-800'>Nilai terakhir: {score}</p>
+                                                        <p className='mb-2 font-normal text-blue-800'>Good Job!</p>
+                                                    </>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <p className='my-3 font-semibold text-slate-500'>Nilai terakhir: -</p>
+                                        )}
+
+                                        <div className="space-y-2 mb-6">
+                                            <div className="flex items-center text-gray-600">
+                                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>{quiz.duration} Menit</span>
+                                            </div>
+                                            <div className="flex items-center text-gray-600">
+                                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>{quiz.questions.length} Pertanyaan</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex space-x-4">
+                                            <button
+                                                className="flex-1 text-center bg-blue-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+                                                onClick={() => {
+                                                    setCurrentQuiz(quiz);
+                                                    setTimeLeft(quiz.duration * 60);
+                                                    setCurrentQuestion(0);
+                                                    setPage('takeQuiz');
+                                                }}
+                                            >
+                                                Mulai Latihan
+                                            </button>
+                                            <button
+                                                className="flex-1 text-center bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+                                                onClick={() => {
+                                                    const confirmed = window.confirm("Apakah Anda yakin ingin menghapus soal ini?");
+                                                    if (confirmed) {
+                                                        setQuizzes(prevQuizzes => prevQuizzes.filter(q => q.id !== quiz.id));
+                                                    }
+                                                }}
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div>
-                                <h3 className="font-medium text-gray-800">Nilai Langsung</h3>
-                                <p className="text-gray-600 text-sm">Dapatkan hasil dan pembahasan segera setelah selesai</p>
+
+                        </>
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-1 gap-3">
+                                <h1 className='text-2xl text-black text-center mx-auto font-semibold mt-5 mb-5'>Anda Belum Menambahkan Paket Soal</h1>
+                                <Button
+                                    onClick={() => setPage('createQuestion')}
+                                    className="bg-blue-950 flex items-center justify-center mx-auto h-15 w-20"
+                                >
+                                    <p className='text-5xl text-center mb-3'>+</p>
+                                </Button>
+                                <p className='text-center font-semibold text-xl text-slate-500'>Tambah Paket Soal</p>
                             </div>
-                        </div>
-                        <div className="flex items-start space-x-3">
-                            <div className="flex-shrink-0">
-                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
+                        </>
+                    )}
+                </div>
+
+                <div className='max-w-7xl mx-auto px-4'>
+                    {/* Info Section */}
+                    <div className="mt-12 bg-white rounded-xl p-6 shadow-sm">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Informasi Quiz</h2>
+                        <div className="grid md:grid-cols-3 gap-6">
+                            <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-800">Nilai Langsung</h3>
+                                    <p className="text-gray-600 text-sm">Dapatkan hasil dan pembahasan segera setelah selesai</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="font-medium text-gray-800">Bisa Diulang</h3>
-                                <p className="text-gray-600 text-sm">Ulangi kuis untuk meningkatkan pemahaman</p>
+                            <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-800">Bisa Diulang</h3>
+                                    <p className="text-gray-600 text-sm">Ulangi kuis untuk meningkatkan pemahaman</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex items-start space-x-3">
-                            <div className="flex-shrink-0">
-                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 className="font-medium text-gray-800">Pembahasan Lengkap</h3>
-                                <p className="text-gray-600 text-sm">Pelajari dari pembahasan detail setiap soal</p>
+                            <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-800">Pembahasan Lengkap</h3>
+                                    <p className="text-gray-600 text-sm">Pelajari dari pembahasan detail setiap soal</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    );
+        )
+    };
 
     // Create Quiz Page Component
     const CreateQuestion = () => {
@@ -594,12 +615,17 @@ const QuizApp = () => {
     };
 
 
-    const Results = () => {
+    const Results = ({ setScore }) => {
         const correctAnswersCount = currentQuiz.questions.reduce((acc, question, idx) => {
             return acc + (question.correctAnswer === userAnswers[idx] ? 1 : 0);
         }, 0);
 
         const score = (correctAnswersCount / currentQuiz.questions.length) * 100;
+
+        useEffect(() => {
+            setScore(Math.round(score));
+        }, [score, setScore]);
+
         const scoreMessage = score === 100
             ? "Perfect Score! Amazing job! 🎉"
             : score >= 80
@@ -681,37 +707,102 @@ const QuizApp = () => {
     // ReviewPage Component
     const ReviewPage = () => {
         return (
-            <div className="p-8 max-w-3xl mx-auto bg-white rounded-lg shadow-md">
-                <h1 className="text-4xl font-bold text-blue-900 mb-8 text-center">Review Soal</h1>
-                <div className="space-y-8">
-                    {currentQuiz.questions.map((question, index) => (
-                        <Card key={index} className="p-6 bg-white rounded-lg shadow-md">
-                            <h2 className="text-xl font-semibold bg-blue-100 text-blue-700 px-3 py-2 rounded-md">
-                                Soal {index + 1}
-                            </h2>
-                            <p className="text-lg text-gray-700 mt-3">{question.question}</p>
+            <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-8 px-4">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-bold text-blue-900 mb-3">Review Soal</h1>
+                        <p className="text-gray-600">Pelajari kembali jawaban dan pembahasan dari setiap soal</p>
+                    </div>
 
-                            <div className="space-y-3 mt-4">
-                                <p className="text-md text-blue-900">
-                                    <strong>Jawaban Anda:</strong> <span className="text-gray-800">{userAnswers[index] || "Tidak dijawab"}</span>
-                                </p>
-                                <p className="text-md text-blue-900">
-                                    <strong>Jawaban Benar:</strong> <span className="text-green-600">{question.correctAnswer}</span>
-                                </p>
-                                <p className="text-sm text-gray-600 mt-2">
-                                    <strong>Pembahasan:</strong> <span className="text-gray-700">{question.pembahasan || "Tidak ada pembahasan."}</span>
-                                </p>
-                            </div>
-                        </Card>
-                    ))}
-                </div>
-                <div className="mt-8 flex justify-center gap-4 flex-col sm:flex-row">
-                    <Button  className="text-white hover:bg-blue-700 font-semibold px-6 py-2 rounded-md bg-blue-950" onClick={() => setPage('results')}>
-                        Kembali ke Halaman Hasil
-                    </Button>
-                    <Button variant="outline" className="bg-white border-blue-600 text-blue-500 font-semibold px-6 py-2 rounded-md hover:bg-blue-50" onClick={() => setPage('quizList')}>
-                        Kembali ke Halaman Daftar Soal
-                    </Button>
+                    <div className="space-y-8">
+                        {currentQuiz.questions.map((question, index) => {
+                            const isCorrect = userAnswers[index] === question.correctAnswer;
+
+                            return (
+                                <Card key={index} className="transform transition-all duration-300 hover:shadow-xl">
+                                    <div className="p-6">
+                                        {/* Question Header */}
+                                        <div className="flex items-center gap-3 mb-6">
+                                            {isCorrect ? (
+                                                <div className="bg-blue-100 text-blue-800 w-12 h-12 rounded-full flex items-center justify-center font-bold">
+                                                    {index + 1}
+                                                </div>
+                                            ) : (
+                                                <div className="bg-red-100 text-blue-800 w-12 h-12 rounded-full flex items-center justify-center font-bold">
+                                                    {index + 1}
+                                                </div>
+                                            )}
+                                            <h2 className="text-xl font-semibold text-blue-900 flex-grow">
+                                                {question.question}
+                                            </h2>
+                                        </div>
+
+                                        {/* Answer Section */}
+                                        <div className="space-y-4">
+                                            <div className={`p-4 rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+                                                <div className="flex items-start gap-3">
+                                                    {isCorrect ? (
+                                                        <CheckCircle2 className="w-6 h-6 text-green-500 mt-1" />
+                                                    ) : (
+                                                        <XCircle className="w-6 h-6 text-red-500 mt-1" />
+                                                    )}
+                                                    <div>
+                                                        <p className="text-sm text-gray-600 mb-1">Jawaban Anda</p>
+                                                        <p className={`font-medium ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                                                            {userAnswers[index] || "Tidak dijawab"}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Correct Answer */}
+                                            <div className="p-4 bg-blue-50 rounded-lg">
+                                                <div className="flex items-start gap-3">
+                                                    <CheckCircle2 className="w-6 h-6 text-blue-500 mt-1" />
+                                                    <div>
+                                                        <p className="text-sm text-gray-600 mb-1">Jawaban Benar</p>
+                                                        <p className="font-medium text-blue-700">{question.correctAnswer}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Explanation */}
+                                            {question.pembahasan && (
+                                                <div className="p-4 bg-gray-50 rounded-lg">
+                                                    <div className="flex items-start gap-3">
+                                                        <Book className="w-6 h-6 text-gray-500 mt-1" />
+                                                        <div>
+                                                            <p className="text-sm text-gray-600 mb-1">Pembahasan</p>
+                                                            <p className="text-gray-700">{question.pembahasan}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Card>
+                            );
+                        })}
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="mt-12 flex justify-center gap-4 flex-col sm:flex-row">
+                        <Button
+                            onClick={() => setPage('results')}
+                            className="group bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300"
+                        >
+                            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                            Kembali ke Halaman Hasil
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => setPage('quizList')}
+                            className="group border-2 border-blue-500 text-blue-500 hover:bg-blue-50 px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300"
+                        >
+                            <ListOrdered className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            Kembali ke Daftar Soal
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -720,10 +811,10 @@ const QuizApp = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {page === 'quizList' && <QuizList quizzes={quizzes} />}
+            {page === 'quizList' && <QuizList score={score} />}
             {page === 'createQuestion' && <CreateQuestion />}
             {page === 'takeQuiz' && <TakeQuiz />}
-            {page === 'results' && <Results />}
+            {page === 'results' && <Results setScore={setScore} />}
             {page === 'review' && <ReviewPage />}
         </div>
     );

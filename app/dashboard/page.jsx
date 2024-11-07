@@ -1,47 +1,30 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
-
+import { saveSchoolInfo, getSchoolInfo } from "../../utlis/localStorage"
+import { defaultSchoolInfo } from "../components/DefaultSchoolInfo"
 
 
 const SchoolWebsiteDashboard = () => {
 
-  const handleSubmit = () => {
-    alert("Perubahan Berhasil disimpan")
-  }
+  const [schoolInfo, setSchoolInfo] = useState(defaultSchoolInfo);
 
-  const [schoolInfo, setSchoolInfo] = useState({
-    name: "SD Negeri 1 SabahBalau",
-    description: "Mendidik generasi masa depan dengan nilai-nilai unggul, kreativitas, dan inovasi. Kami berkomitmen untuk memberikan pendidikan berkualitas yang membentuk karakter siswa.",
-    stats: [
-      { label: "Siswa Aktif", value: "1,200+" },
-      { label: "Guru & Staff", value: "100+" },
-      { label: "Program Unggulan", value: "15+" },
-      { label: "Prestasi", value: "50+" }
-    ],
-    facilities: [
-      "Ruang Belajar yang layak",
-      "Perpustakaan",
-      "Lapangan Olahraga",
-      "Fasilitas Ekstrakurikuler"
-    ],
-    contact: {
-      address: "Jl. ... No. 123",
-      city: "Kota Lampung Selatan, 12345",
-      phone: "(021) 123-4567",
-      email: "rehan121203@gmail.com"
-    },
-    operationalHours: {
-      weekdays: "Senin - Jumat: 07:00 - 15:00",
-      saturday: "Sabtu: 07:00 - 12:00",
-      sunday: "Minggu: Tutup"
+  useEffect(() => {
+    const savedInfo = getSchoolInfo();
+    if (savedInfo) {
+      setSchoolInfo(savedInfo);
     }
-  });
+  }, []);
+
+  const handleSubmit = () => {
+    saveSchoolInfo(schoolInfo);
+    alert("Perubahan Berhasil disimpan");
+  };
 
   const handleUpdateName = (e) => {
     setSchoolInfo(prev => ({
@@ -104,7 +87,7 @@ const SchoolWebsiteDashboard = () => {
 
   return (
     <div className="p-6 bg-slate-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Dasbor Manajemen Konten Sekolah</h1>
+      <h1 className="text-3xl font-bold mb-6">Dasboard Manajemen Konten Sekolah</h1>
 
       {/* Informasi Dasar Sekolah */}
       <Card className="mb-6">
@@ -284,13 +267,12 @@ const SchoolWebsiteDashboard = () => {
         </CardContent>
       </Card>
       <div className="text-center mt-6">
-        <Link
+        <button
           onClick={handleSubmit}
-          href="/"
           className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg"
         >
           Simpan Perubahan
-        </Link>
+        </button>
       </div>
     </div>
   );

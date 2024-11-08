@@ -26,7 +26,9 @@ import { Progress } from '@/app/components/ui/progress';
 import { Trophy, Target, Frown, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { Textarea } from '@/components/ui/textarea';
-import CreateQuiz from '../createQuiz/page';
+import LoadingModal from '@/app/components/ui/LoadingModal';
+import RemoveBtn from '@/app/components/ui/RemoveBtn';
+import { useRouter } from "next/navigation";
 
 const QuizApp = () => {
     const [page, setPage] = useState('quizList');
@@ -38,6 +40,9 @@ const QuizApp = () => {
     const [userAnswers, setUserAnswers] = useState({});
     const [selectedGrade, setSelectedGrade] = useState('4');
     const [score, setScore] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [quizScores, setQuizScores] = useState({});
 
     const addQuiz = (newQuiz) => {
         setQuizzes(prevQuizzes => [...prevQuizzes, newQuiz]);
@@ -84,7 +89,60 @@ const QuizApp = () => {
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
+    useEffect(() => {
+        const savedScores = localStorage.getItem('quizScores');
+        if (savedScores) {
+            setQuizScores(JSON.parse(savedScores));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('quizScores', JSON.stringify(quizScores));
+    }, [quizScores]);
+
+    useEffect(() => {
+        const fetchQuizzes = async () => {
+            try {
+                const res = await fetch('/api/quiz', {
+                    cache: 'no-store',
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to fetch quizzes");
+                }
+
+                const data = await res.json();
+                setQuizzes(data.quizzes);
+            } catch (error) {
+                console.error("Error Loading Quizzes: ", error);
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchQuizzes();
+    }, []);
+
+    const saveQuizScore = (quizId, score) => {
+        setQuizScores(prev => ({
+            ...prev,
+            [quizId]: score
+        }));
+    };
+
+    if (loading) {
+        return <LoadingModal />;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+
+
     const QuizList = ({ score }) => {
+
         return (
             <div className="p-6">
                 <div className="md:justify-end flex justify-center  items-center mb-6">
@@ -131,7 +189,7 @@ const QuizApp = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {quizzes.map((quiz) => (
                                     <div
-                                        key={quiz.id}
+                                        key={quiz._id}
                                         className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 relative"
                                     >
                                         {/* Subject Badge */}
@@ -147,7 +205,7 @@ const QuizApp = () => {
                                         {/* Quiz Info */}
                                         <h3 className="text-xl font-semibold text-gray-800 mb-4">{quiz.title}</h3>
 
-                                        {showResults ? (
+                                        {quizScores[quiz._id] !== undefined ? (
                                             <>
                                                 {score < 65 ? (
                                                     <>
@@ -164,6 +222,8 @@ const QuizApp = () => {
                                         ) : (
                                             <p className='my-3 font-semibold text-slate-500'>Nilai terakhir: -</p>
                                         )}
+
+                                        <p className='my-3 font-semibold text-slate-500'>kelas {quiz.grade}</p>
 
                                         <div className="space-y-2 mb-6">
                                             <div className="flex items-center text-gray-600">
@@ -193,17 +253,7 @@ const QuizApp = () => {
                                             >
                                                 Mulai Latihan
                                             </button>
-                                            <button
-                                                className="flex-1 text-center bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-                                                onClick={() => {
-                                                    const confirmed = window.confirm("Apakah Anda yakin ingin menghapus soal ini?");
-                                                    if (confirmed) {
-                                                        setQuizzes(prevQuizzes => prevQuizzes.filter(q => q.id !== quiz.id));
-                                                    }
-                                                }}
-                                            >
-                                                Hapus
-                                            </button>
+                                            <RemoveBtn />
                                         </div>
                                     </div>
                                 ))}
@@ -274,25 +324,6 @@ const QuizApp = () => {
     // Create Quiz Page Component
     const CreateQuestion = () => {
 
-        // const [selectedGrade, setSelectedGrade] = useState('4');
-        // const [quizzes, setQuizzes] = useState([]);
-        // const [page, setPage] = useState('createQuiz');
-
-        // console.log("masih", typeof addQuiz);
-
-        // const handleSaveQuiz = () => {
-        //     const newQuiz = {
-        //         id: Date.now(),
-        //         title,
-        //         description,
-        //         difficulty,
-        //         duration,
-        //         questions,
-        //     };
-        //     addQuiz(newQuiz);
-        //     router.push('/configure/quiz');
-        // };
-
         const [newQuiz, setNewQuiz] = useState({
             title: "",
             description: "",
@@ -362,6 +393,15 @@ const QuizApp = () => {
             }
         };
 
+        // const handleGradeChange = (event) => {
+        //     const value = event.target.value;
+        //     if (["4", "5", "6"].includes(value) || value === "") {
+        //         setNewQuiz(value);
+        //     } else {
+        //         alert("Masukkan hanya angka 4, 5, atau 6");
+        //     }
+        // };
+
         return (
             <div className="p-6 max-w-3xl mx-auto">
                 <div className="flex md:flex-row flex-col justify-between items-center mb-6">
@@ -375,24 +415,16 @@ const QuizApp = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {/* Grade Selection */}
-                        <div className="flex flex-col mb-8 gap-3">
+                        {/* <div className="flex flex-col mb-8 gap-3">
                             <Label>Kelas</Label>
-                            <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
-                                {['4', '5', '6'].map((grade) => (
-                                    <button
-                                        key={grade}
-                                        className={`sm:px-8 px-4 py-2 rounded-md text-sm font-medium transition-colors
-              ${selectedGrade === grade
-                                                ? 'bg-blue-800 text-white'
-                                                : 'text-gray-500 hover:text-gray-700'
-                                            }`}
-                                        onClick={() => setSelectedGrade(grade)}
-                                    >
-                                        Kelas {grade}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                            <Input
+                                type="text"
+                                value={newQuiz.grade}
+                                onChange={handleGradeChange}
+                                placeholder="Masukkan Kelas (4, 5, atau 6)"
+                                required
+                            />
+                        </div> */}
                         <div>
                             <Label>Materi Soal</Label>
                             <Input
@@ -545,7 +577,7 @@ const QuizApp = () => {
     };
 
     // Take Quiz Page Component
-    const TakeQuiz = () => {
+    const TakeQuiz = (score) => {
         const handleAnswer = (answer) => {
             setUserAnswers(prev => ({
                 ...prev,
@@ -601,7 +633,7 @@ const QuizApp = () => {
                                 if (currentQuestion < currentQuiz.questions.length - 1) {
                                     setCurrentQuestion(prev => prev + 1);
                                 } else {
-                                    setShowResults(true);
+                                    saveQuizScore(currentQuiz._id, score);
                                     setPage('results');
                                 }
                             }}

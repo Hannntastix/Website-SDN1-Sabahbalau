@@ -1,29 +1,36 @@
-// import prisma from '@/lib/prisma'
-// import { NextResponse } from 'next/server'
+import connectMongoDB from "@/lib/mongodb";
+import Quiz from "@/models/quiz";
+import { NextResponse } from "next/server";
 
-// export async function GET(request, { params }) {
-//     try {
-//         const quiz = await prisma.quiz.findUnique({
-//             where: {
-//                 id: params.id,
-//             },
-//             include: {
-//                 questions: true,
-//             },
-//         })
+export async function PUT(request, { params }) {
+    const { id } = params;
 
-//         if (!quiz) {
-//             return NextResponse.json(
-//                 { error: 'Quiz not found' },
-//                 { status: 404 }
-//             )
-//         }
+    const {
+        newTitle: title,
+        newDescription: description,
+        newGrade: grade,
+        newDifficulty: difficulty,
+        newDuration: duration,
+        newQuestions: questions
+    } = await request.json()
+    await connectMongoDB();
+    await Quiz.findByIdAndUpdate(
+        id,
+        {
+            title,
+            description,
+            grade,
+            difficulty,
+            duration,
+            questions
+        }
+    );
+    return NextResponse.json({ message: "Quiz Updated" }, { status: 200 })
+}
 
-//         return NextResponse.json(quiz)
-//     } catch (error) {
-//         return NextResponse.json(
-//             { error: 'Error fetching quiz' },
-//             { status: 500 }
-//         )
-//     }
-// }
+export async function GET(request, { params }) {
+    const { id } = params;
+    await connectMongoDB();
+    const quiz = await Quiz.findOne({ _id: id });
+    return NextResponse.json({ quiz }, { status: 200 });
+}

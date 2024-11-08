@@ -4,16 +4,37 @@ import React, { useEffect, useState } from 'react';
 import { getSchoolInfo } from '../utlis/localStorage';
 import { defaultSchoolInfo } from './components/DefaultSchoolInfo';
 import Link from 'next/link';
+import LoadingModal from './components/ui/LoadingModal';
 
 const Home = () => {
   const [schoolInfo, setSchoolInfo] = useState(defaultSchoolInfo);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchSchoolInfo = async () => {
+    try {
+      const savedInfo = await getSchoolInfo();
+      setSchoolInfo(savedInfo);
+    } catch (err) {
+      setError("Gagal memuat data sekolah.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const savedInfo = getSchoolInfo();
-    if (savedInfo) {
-      setSchoolInfo(savedInfo);
-    }
+    setLoading(true);
+    fetchSchoolInfo();
   }, []);
+
+
+  if (loading) {
+    return <LoadingModal />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -36,7 +57,7 @@ const Home = () => {
                   href="/configure/quiz"
                   className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 sm:px-8 py-3 rounded-lg transition-colors shadow-lg"
                 >
-                  Mulai Kuis Interaktif
+                  Halaman Daftar Soal
                 </Link>
               </div>
             </div>
@@ -104,13 +125,13 @@ const Home = () => {
 
       <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-400 mb-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Siap Untuk Mengikuti Kuis?</h2>
-          <p className="text-white mb-8 text-lg">Uji pemahaman Anda dengan kuis interaktif kami</p>
+          <h2 className="text-3xl font-bold text-white mb-6">Siap Untuk Mengerjakan Latihan Soal?</h2>
+          <p className="text-white mb-8 text-lg">Uji pemahamanmu dengan mengerjakan latihan soal yang berkualitas.</p>
           <Link
             href="/configure/quiz"
             className="inline-block bg-white text-blue-500 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors shadow-lg"
           >
-            Mulai Kuis Sekarang
+          Halaman Daftar Soal
           </Link>
         </div>
       </section>
@@ -142,7 +163,7 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-slate-700 text-center">
-            <p>&copy; 2024 {schoolInfo.name}. All rights reserved.</p>
+            <p>&copy; 2024 {schoolInfo.name}.</p>
           </div>
         </div>
       </footer>

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { PlusCircle, Timer, CheckCircle2, XCircle, Book, ArrowLeft, ListOrdered, AlignLeft } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Timer, CheckCircle2, XCircle, Book, ArrowLeft, ListOrdered, AlignLeft, ArrowRight, Clock } from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -23,12 +23,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Progress } from '@/app/components/ui/progress';
-import { Trophy, Target, Frown, BookOpen } from 'lucide-react';
+import { Trophy, Target, Frown, BookOpen, Info, HelpCircle, Plus, Trash2, Save } from 'lucide-react';
 import Link from 'next/link';
 import { Textarea } from '@/components/ui/textarea';
 import LoadingModal from '@/app/components/ui/LoadingModal';
 import RemoveBtn from '@/app/components/ui/RemoveBtn';
 import { useRouter } from "next/navigation";
+import { FaInfoCircle } from 'react-icons/fa';
 
 const QuizApp = () => {
     const [page, setPage] = useState('quizList');
@@ -43,14 +44,13 @@ const QuizApp = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [quizScores, setQuizScores] = useState({});
+    const [user, setUser] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const addQuiz = (newQuiz) => {
         setQuizzes(prevQuizzes => [...prevQuizzes, newQuiz]);
         setPage('quizList');
     };
-
-    console.log("masih", typeof addQuiz);
-    console.log("QuizApp rendered", quizzes);
 
 
     const getDifficultyColor = (difficulty) => {
@@ -101,6 +101,23 @@ const QuizApp = () => {
     }, [quizScores]);
 
     useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await fetch('/api/user');
+                if (res.ok) {
+                    const data = await res.json();
+                    setUser(data.user);
+                    setIsAdmin(data.isAdmin);
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
         const fetchQuizzes = async () => {
             try {
                 const res = await fetch('/api/quiz', {
@@ -140,19 +157,31 @@ const QuizApp = () => {
     }
 
 
-
     const QuizList = ({ score }) => {
+
+        const filteredQuizzes = useMemo(() => {
+            return quizzes.filter(quiz => quiz.grade === selectedGrade);
+        }, [quizzes, selectedGrade]);
 
         return (
             <div className="p-6">
                 <div className="md:justify-end flex justify-center  items-center mb-6">
-                    <Button
+                    {/* Button ini harusnya dihapus ketika bukan admin yang akses */}
+                    {/* <button
                         onClick={() => setPage('createQuestion')}
-                        className="bg-blue-950 flex items-center gap-2"
+                        className="px-4 py-2 bg-blue-950 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
                     >
-                        <PlusCircle className="w-4 h-4" />
                         Tambah Paket Soal
-                    </Button>
+                    </button> */}
+                    {isAdmin && (
+                        <Button
+                            onClick={() => setPage('createQuestion')}
+                            className="bg-blue-950 flex items-center gap-2"
+                        >
+                            <PlusCircle className="w-4 h-4" />
+                            Tambah Paket Soal
+                        </Button>
+                    )}
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4">
@@ -171,7 +200,7 @@ const QuizApp = () => {
                                 <button
                                     key={grade}
                                     className={`px-8 py-2 rounded-md text-sm font-medium transition-colors
-                  ${selectedGrade === grade
+                                ${selectedGrade === grade
                                             ? 'bg-blue-800 text-white'
                                             : 'text-gray-500 hover:text-gray-700'
                                         }`}
@@ -184,10 +213,11 @@ const QuizApp = () => {
                     </div>
 
                     {/* Quiz Grid */}
-                    {quizzes.length > 0 ? (
-                        <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {quizzes.map((quiz) => (
+                    {Array.isArray(filteredQuizzes) && filteredQuizzes.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredQuizzes.map((quiz) => {
+
+                                return (
                                     <div
                                         key={quiz._id}
                                         className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 relative"
@@ -195,15 +225,17 @@ const QuizApp = () => {
                                         {/* Subject Badge */}
                                         <div className="flex justify-between items-start mb-4">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                                {quiz.description}
+                                                {quiz.description || 'No Description'}
                                             </span>
                                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(quiz.difficulty)}`}>
-                                                {quiz.difficulty}
+                                                {quiz.difficulty || 'Default'}
                                             </span>
                                         </div>
 
                                         {/* Quiz Info */}
-                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">{quiz.title}</h3>
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                                            {quiz.title || 'Untitled Quiz'}
+                                        </h3>
 
                                         {quizScores[quiz._id] !== undefined ? (
                                             <>
@@ -223,20 +255,22 @@ const QuizApp = () => {
                                             <p className='my-3 font-semibold text-slate-500'>Nilai terakhir: -</p>
                                         )}
 
-                                        <p className='my-3 font-semibold text-slate-500'>kelas {quiz.grade}</p>
+                                        <span className="inline-flex mb-4 items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                            Kelas {quiz.grade || 'No Description'}
+                                        </span>
 
                                         <div className="space-y-2 mb-6">
                                             <div className="flex items-center text-gray-600">
                                                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
-                                                <span>{quiz.duration} Menit</span>
+                                                <span>{quiz.duration || 0} Menit</span>
                                             </div>
                                             <div className="flex items-center text-gray-600">
                                                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
-                                                <span>{quiz.questions.length} Pertanyaan</span>
+                                                <span>{quiz.questions?.length || 0} Pertanyaan</span>
                                             </div>
                                         </div>
 
@@ -253,26 +287,74 @@ const QuizApp = () => {
                                             >
                                                 Mulai Latihan
                                             </button>
-                                            <RemoveBtn />
+                                            {/* button dibawah ini harusnya dihapus ketika bukan admin akses */}
+                                            <RemoveBtn id={quiz._id} />
+                                            {/* {user ? (
+                                                <>
+                                                    {isAdmin ? (
+                                                        <RemoveBtn id={quiz._id} />
+                                                    ) : null}
+                                                </>
+                                            ) : null} */}
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-
-                        </>
+                                );
+                            })}
+                        </div>
                     ) : (
-                        <>
-                            <div className="grid grid-cols-1 gap-3">
-                                <h1 className='text-2xl text-black text-center mx-auto font-semibold mt-5 mb-5'>Anda Belum Menambahkan Paket Soal</h1>
-                                <Button
-                                    onClick={() => setPage('createQuestion')}
-                                    className="bg-blue-950 flex items-center justify-center mx-auto h-15 w-20"
-                                >
-                                    <p className='text-5xl text-center mb-3'>+</p>
-                                </Button>
-                                <p className='text-center font-semibold text-xl text-slate-500'>Tambah Paket Soal</p>
+                        <div className="grid grid-cols-1 gap-3">
+                            <div className="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 w-full max-w-xl mx-auto p-6 rounded-lg shadow-lg">
+                                <div className="flex flex-col items-center">
+                                    <FaInfoCircle className="text-5xl text-blue-500 mb-4 animate-bounce" />
+                                    <h1 className="text-2xl text-gray-800 font-semibold text-center mb-2">
+                                        {!Array.isArray(quizzes) || quizzes.length === 0
+                                            ? "Anda Belum Menambahkan Paket Soal"
+                                            : `Belum ada paket soal untuk kelas ${selectedGrade}`}
+                                    </h1>
+                                    <p className="text-lg text-gray-600 text-center mb-4">
+                                        {!Array.isArray(quizzes) || quizzes.length === 0
+                                            ? "Silakan tambahkan paket soal untuk memulai."
+                                            : `Silakan hubungi guru anda untuk informasi lebih lanjut 🙌`}
+                                    </p>
+                                    {/* Button ini harusnya dihapus ketika bukan admin yang akses */}
+                                    <button
+                                        onClick={() => setPage('createQuestion')}
+                                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
+                                    >
+                                        Tambah Paket Soal
+                                    </button>
+                                </div>
                             </div>
-                        </>
+                            {/* {user ? (
+                                <>
+                                    {adminEmail ? (
+                                        <>
+                                            <div className="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 w-full max-w-xl mx-auto p-6 rounded-lg shadow-lg">
+                                                <div className="flex flex-col items-center">
+                                                    <FaInfoCircle className="text-5xl text-blue-500 mb-4 animate-bounce" />
+                                                    <h1 className="text-2xl text-gray-800 font-semibold text-center mb-2">
+                                                        {!Array.isArray(quizzes) || quizzes.length === 0
+                                                            ? "Anda Belum Menambahkan Paket Soal"
+                                                            : `Belum ada paket soal untuk kelas ${selectedGrade}`}
+                                                    </h1>
+                                                    <p className="text-lg text-gray-600 text-center mb-4">
+                                                        {!Array.isArray(quizzes) || quizzes.length === 0
+                                                            ? "Silakan tambahkan paket soal untuk memulai."
+                                                            : `Silakan hubungi guru Anda untuk informasi lebih lanjut 🙌`}
+                                                    </p>
+                                                    <button
+                                                        onClick={() => setPage('createQuestion')}
+                                                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
+                                                    >
+                                                        Tambah Paket Soal
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : null}
+                                </>
+                            ) : null} */}
+                        </div>
                     )}
                 </div>
 
@@ -324,254 +406,397 @@ const QuizApp = () => {
     // Create Quiz Page Component
     const CreateQuestion = () => {
 
-        const [newQuiz, setNewQuiz] = useState({
+        const router = useRouter();
+        const [formData, setFormData] = useState({
             title: "",
             description: "",
-            duration: "",
+            grade: "4",
             difficulty: "",
-            questions: []
+            duration: "",
+            questions: [{
+                question: "",
+                options: ["", "", "", ""],
+                correctAnswer: "",
+                pembahasan: ""
+            }]
         });
 
-        const [currentNewQuestion, setCurrentNewQuestion] = useState({
-            question: "",
-            options: ["", "", "", ""],
-            correctAnswer: "",
-            pembahasan: "",
-        });
+        const handleInputChange = (e) => {
+            const { name, value } = e.target;
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        };
 
-        const isFormValid = () => {
-            const isQuizDetailValid =
-                newQuiz.title.trim() !== "" &&
-                newQuiz.description.trim() !== "" &&
-                newQuiz.duration.trim() !== "" &&
-                newQuiz.difficulty.trim() !== "" &&
-                selectedGrade !== "";
-
-            const areQuestionsValid = newQuiz.questions.length > 0 &&
-                newQuiz.questions.every(question =>
-                    question.question.trim() !== "" &&
-                    question.options.every(option => option.trim() !== "") &&
-                    question.correctAnswer.trim() !== "" &&
-                    question.pembahasan.trim() !== ""
-                );
-
-            return isQuizDetailValid && areQuestionsValid;
+        const handleQuestionChange = (index, field, value) => {
+            setFormData(prev => {
+                const newQuestions = [...prev.questions];
+                if (field === "options") {
+                    const optionIndex = parseInt(value.target.dataset.optionindex);
+                    newQuestions[index].options[optionIndex] = value.target.value;
+                } else {
+                    newQuestions[index][field] = value.target.value;
+                }
+                return {
+                    ...prev,
+                    questions: newQuestions
+                };
+            });
         };
 
         const addQuestion = () => {
-            const isQuestionValid =
-                currentNewQuestion.question.trim() !== "" &&
-                currentNewQuestion.options.every(option => option.trim() !== "") &&
-                currentNewQuestion.correctAnswer.trim() !== "" &&
-                currentNewQuestion.pembahasan.trim() !== "";
-
-            if (isQuestionValid) {
-                setNewQuiz(prev => ({
-                    ...prev,
-                    questions: [...prev.questions, { ...currentNewQuestion, id: prev.questions.length + 1 }]
-                }));
-                setCurrentNewQuestion({
+            setFormData(prev => ({
+                ...prev,
+                questions: [...prev.questions, {
                     question: "",
                     options: ["", "", "", ""],
                     correctAnswer: "",
-                    pembahasan: "",
+                    pembahasan: ""
+                }]
+            }));
+        };
+
+        const removeQuestion = (index) => {
+            setFormData(prev => ({
+                ...prev,
+                questions: prev.questions.filter((_, i) => i !== index)
+            }));
+        };
+
+        const isFormValid = useMemo(() => {
+            const isQuizDetailsValid =
+                formData.title.trim() !== "" &&
+                formData.description.trim() !== "" &&
+                formData.difficulty.trim() !== "" &&
+                formData.duration.trim() !== "";
+
+            const areQuestionsValid = formData.questions.every(question => {
+                const isQuestionTextValid = question.question.trim() !== "";
+                const areOptionsValid = question.options.every(opt => opt.trim() !== "");
+                const isCorrectAnswerValid = question.correctAnswer.trim() !== "";
+                const isPembahasanValid = question.pembahasan.trim() !== "";
+
+                return isQuestionTextValid &&
+                    areOptionsValid &&
+                    isCorrectAnswerValid &&
+                    isPembahasanValid;
+            });
+            return isQuizDetailsValid && areQuestionsValid;
+        }, [formData]);
+
+        const getValidationMessage = () => {
+            if (!formData.title.trim()) return "Silahkan Isi Materi Soal terlebih dahulu";
+            if (!formData.description.trim()) return "Silahkan Isi Mata Pelajaran terlebih dahulu";
+            if (!formData.difficulty.trim()) return "Silahkan Isi Tingkat Kesulitan terlebih dahulu";
+            if (!formData.duration.trim()) return "Silahkan Isi Durasi Pengerjaan Soal terlebih dahulu";
+
+            for (let i = 0; i < formData.questions.length; i++) {
+                const q = formData.questions[i];
+                if (!q.question.trim()) return `Question ${i + 1}: Silahkan Isi Pertanyaan Soal terlebih dahulu`;
+                if (q.options.some(opt => !opt.trim())) return `Question ${i + 1}: Silahkan Isi Pilihan Jawaban Soal terlebih dahulu`;
+                if (!q.correctAnswer.trim()) return `Question ${i + 1}: Silahkan Isi Jawaban Benar terlebih dahulu`;
+                if (!q.pembahasan.trim()) return `Question ${i + 1}: Silahkan Isi Pembahasan terlebih dahulu`;
+            }
+
+            return "";
+        };
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+
+            if (!formData.title || !formData.description || !formData.grade ||
+                !formData.difficulty || !formData.duration) {
+                alert("Please fill in all quiz details");
+                return;
+            }
+
+            const isQuestionsValid = formData.questions.every(q =>
+                q.question &&
+                q.options.every(opt => opt.trim() !== "") &&
+                q.correctAnswer &&
+                q.pembahasan
+            );
+
+            if (!isQuestionsValid) {
+                alert("Please complete all question fields");
+                return;
+            }
+
+            try {
+                const res = await fetch("http://localhost:3000/api/quiz", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
                 });
-            } else {
-                alert("Harap lengkapi semua field pertanyaan sebelum menambahkan!");
+
+                if (res.ok) {
+                    setPage("quizList");
+                    window.location.reload();
+                } else {
+                    throw new Error("Failed to create quiz");
+                }
+            } catch (error) {
+                console.error("Error creating quiz:", error);
+                alert("Failed to create quiz");
             }
         };
-
-        const saveQuiz = () => {
-            if (isFormValid()) {
-                setQuizzes(prev => [
-                    ...prev,
-                    { ...newQuiz, id: prev.length + 1, questionCount: newQuiz.questions.length }
-                ]);
-                setPage('quizList');
-            } else {
-                alert("Harap lengkapi semua field sebelum menyimpan quiz!");
-            }
-        };
-
-        // const handleGradeChange = (event) => {
-        //     const value = event.target.value;
-        //     if (["4", "5", "6"].includes(value) || value === "") {
-        //         setNewQuiz(value);
-        //     } else {
-        //         alert("Masukkan hanya angka 4, 5, atau 6");
-        //     }
-        // };
 
         return (
-            <div className="p-6 max-w-3xl mx-auto">
+            <div className="max-w-5xl mx-auto p-6 bg-gray-50 min-h-screen">
+                {/* Header Section */}
                 <div className="flex md:flex-row flex-col justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-slate-600">Sistem Manajemen Soal</h1>
                     <Button onClick={() => setPage('quizList')} className="my-5 bg-blue-950">Kembali ke daftar soal</Button>
                 </div>
 
-                <Card className="mb-6">
-                    <CardHeader>
-                        <CardTitle>Detail Soal</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {/* Grade Selection */}
-                        {/* <div className="flex flex-col mb-8 gap-3">
-                            <Label>Kelas</Label>
-                            <Input
-                                type="text"
-                                value={newQuiz.grade}
-                                onChange={handleGradeChange}
-                                placeholder="Masukkan Kelas (4, 5, atau 6)"
-                                required
-                            />
-                        </div> */}
-                        <div>
-                            <Label>Materi Soal</Label>
-                            <Input
-                                value={newQuiz.title}
-                                onChange={(e) =>
-                                    setNewQuiz((prev) => ({ ...prev, title: e.target.value }))
-                                }
-                                placeholder="Masukkan Materi Soal"
-                                required
-                            />
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    {/* Quiz Details Card */}
+                    <div className="bg-white p-8 rounded-xl shadow-md space-y-6">
+                        <div className="flex items-center justify-between border-b pb-4">
+                            <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                                <BookOpen className="w-5 h-5 text-blue-500" />
+                                Detail Soal
+                            </h2>
+                            <div className="bg-blue-50 text-blue-600 text-sm py-1 px-3 rounded-full">
+                                Step 1 of 2
+                            </div>
                         </div>
-                        <div>
-                            <Label>Mata Pelajaran</Label>
-                            <Input
-                                value={newQuiz.description}
-                                onChange={(e) =>
-                                    setNewQuiz((prev) => ({ ...prev, description: e.target.value }))
-                                }
-                                placeholder="Masukkan Mata Pelajaran"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <Label>Tingkat Kesulitan (Sulit, Sedang, Mudah)</Label>
-                            <Input
-                                value={newQuiz.difficulty}
-                                onChange={(e) =>
-                                    setNewQuiz((prev) => ({ ...prev, difficulty: e.target.value }))
-                                }
-                                placeholder="Masukkan Tingkat Kesulitan Soal"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <Label>Durasi Pengerjaan Soal (menit)</Label>
-                            <Input
-                                type="number"
-                                value={newQuiz.duration}
-                                onChange={(e) =>
-                                    setNewQuiz((prev) => ({ ...prev, duration: e.target.value }))
-                                }
-                                placeholder="Masukkan Durasi dalam Menit"
-                                required
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
 
-                <Card className="mb-6">
-                    <CardHeader>
-                        <CardTitle>Tambah Pertanyaan</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div>
-                            <Label>Pertanyaan</Label>
-                            <Input
-                                value={currentNewQuestion.question}
-                                onChange={(e) => setCurrentNewQuestion(prev => ({ ...prev, question: e.target.value }))}
-                                placeholder="Masukkan Pertanyaan"
-                                required
-                            />
-                        </div>
-                        {currentNewQuestion.options.map((option, idx) => (
-                            <div key={idx}>
-                                <Label>Pilihan {idx + 1}</Label>
-                                <Input
-                                    value={option}
-                                    onChange={(e) => {
-                                        const newOptions = [...currentNewQuestion.options];
-                                        newOptions[idx] = e.target.value;
-                                        setCurrentNewQuestion(prev => ({ ...prev, options: newOptions }));
-                                    }}
-                                    placeholder={`Masukkan Pilihan ${idx + 1}`}
-                                    required
+                        <div className="grid grid-cols-1 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    Nama Materi
+                                    <HelpCircle className="w-4 h-4 text-gray-400 cursor-help"
+                                        title="Enter a clear, descriptive title for your quiz" />
+                                </label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value={formData.title}
+                                    onChange={handleInputChange}
+                                    placeholder="Masukkan Nama Materi"
+                                    className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 />
                             </div>
-                        ))}
-                        <div>
-                            <Label>Jawaban Benar</Label>
-                            <RadioGroup
-                                value={currentNewQuestion.correctAnswer}
-                                onValueChange={(value) => setCurrentNewQuestion(prev => ({ ...prev, correctAnswer: value }))}
-                                required
-                            >
-                                {currentNewQuestion.options.map((option, idx) => (
-                                    <div key={idx} className="flex items-center space-x-2">
-                                        <RadioGroupItem value={option} id={`option${idx}`} />
-                                        <Label htmlFor={`option${idx}`}>{option || `Option ${idx + 1}`}</Label>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">Mata Pelajaran</label>
+                                <input
+                                    type="text"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    placeholder="Masukkan Mata Pelajaran"
+                                    className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">Kelas</label>
+                                <select
+                                    name="grade"
+                                    value={formData.grade}
+                                    onChange={handleInputChange}
+                                    className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                                >
+                                    <option value="4">Kelas 4</option>
+                                    <option value="5">Kelas 5</option>
+                                    <option value="6">Kelas 6</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">Tingkat Kesulitan</label>
+                                <select
+                                    name="difficulty"
+                                    value={formData.difficulty}
+                                    onChange={handleInputChange}
+                                    className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                                >
+                                    <option value="">Pilih Tingkat Kesulitan</option>
+                                    <option value="Mudah">Mudah</option>
+                                    <option value="Sedang">Sedang</option>
+                                    <option value="Sulit">Sulit</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">Durasi Pengerjaan (menit)</label>
+                                <input
+                                    type="number"
+                                    name="duration"
+                                    value={formData.duration}
+                                    onChange={handleInputChange}
+                                    placeholder="Masukkan durasi (dalam menit)"
+                                    min="1"
+                                    className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Questions Section */}
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                                <BookOpen className="w-5 h-5 text-blue-500" />
+                                Soal
+                            </h2>
+                            <div className="bg-blue-50 text-blue-600 text-sm py-1 px-3 rounded-full">
+                                Step 2 of 2
+                            </div>
+                        </div>
+
+                        {formData.questions.map((question, questionIndex) => (
+                            <div key={questionIndex}
+                                className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:border-blue-200 transition-all">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                        Question {questionIndex + 1}
+                                        {questionIndex === 0 && (
+                                            <span className="bg-yellow-100 text-yellow-800 text-xs py-1 px-2 rounded-full">
+                                                Diperlukan Minimal 1 Soal
+                                            </span>
+                                        )}
+                                    </h3>
+                                    {formData.questions.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removeQuestion(questionIndex)}
+                                            className="text-red-500 hover:text-red-700 flex items-center gap-2 transition-colors"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                            Hapus
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700">Pertanyaan</label>
+                                        <textarea
+                                            value={question.question}
+                                            onChange={(e) => handleQuestionChange(questionIndex, "question", e)}
+                                            placeholder="Masukkan Pertanyaan..."
+                                            className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                            rows="2"
+                                        />
                                     </div>
-                                ))}
-                            </RadioGroup>
-                        </div>
-                        <div>
-                            <Label>Pembahasan</Label>
-                            <Textarea
-                                value={currentNewQuestion.pembahasan}
-                                onChange={(e) => setCurrentNewQuestion(prev => ({ ...prev, pembahasan: e.target.value }))}
-                                placeholder="Masukkan Penjelasan Jawaban"
-                                className="w-full"
-                                rows={4}
-                            />
-                        </div>
-                        <Button onClick={addQuestion} className="bg-blue-950 w-full">Add Question</Button>
-                    </CardContent>
-                </Card>
 
-                <div className="space-y-4">
-                    <h2 className="text-xl font-semibold">Added Questions ({newQuiz.questions.length})</h2>
-                    {newQuiz.questions.map((q, idx) => (
-                        <Card key={idx}>
-                            <CardContent className="pt-4">
-                                <div className="flex justify-between items-center">
-                                    <p className="font-medium">{idx + 1}. {q.question}</p>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                            setNewQuiz((prev) => ({
-                                                ...prev,
-                                                questions: prev.questions.filter((_, questionIdx) => questionIdx !== idx)
-                                            }));
-                                        }}
-                                    >
-                                        Hapus
-                                    </Button>
+                                    <div className="space-y-4">
+                                        <label className="text-sm font-medium text-gray-700">Pilihan Jawaban</label>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {question.options.map((option, optionIndex) => (
+                                                <div key={optionIndex} className="relative">
+                                                    <div className="absolute left-3 top-3 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-600">
+                                                        {String.fromCharCode(65 + optionIndex)}
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        value={option}
+                                                        data-optionindex={optionIndex}
+                                                        onChange={(e) => handleQuestionChange(questionIndex, "options", e)}
+                                                        placeholder={`Opsi ${optionIndex + 1}`}
+                                                        className="border border-gray-300 rounded-lg p-3 pl-12 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                            Jawaban Benar
+                                            <HelpCircle className="w-4 h-4 text-gray-400 cursor-help"
+                                                title="Select the correct answer from your options" />
+                                        </label>
+                                        <select
+                                            value={question.correctAnswer}
+                                            onChange={(e) => handleQuestionChange(questionIndex, "correctAnswer", e)}
+                                            className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                                        >
+                                            <option value="">Pilih Jawaban Benar</option>
+                                            {question.options.map((option, optIndex) => (
+                                                option.trim() && (
+                                                    <option key={optIndex} value={option}>
+                                                        {String.fromCharCode(65 + optIndex)} - {option}
+                                                    </option>
+                                                )
+                                            ))}
+                                        </select>
+                                        {question.correctAnswer && (
+                                            <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+                                                <span className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-xs font-medium">
+                                                    {String.fromCharCode(65 + question.options.findIndex(opt => opt === question.correctAnswer))}
+                                                </span>
+                                                Merupakan jawaban yang benar
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700">Pembahasan</label>
+                                        <textarea
+                                            value={question.pembahasan}
+                                            onChange={(e) => handleQuestionChange(questionIndex, "pembahasan", e)}
+                                            placeholder="Silahkan berikan penjelasan untuk jawaban benar..."
+                                            className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                            rows="3"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="ml-4 mt-2">
-                                    {q.options.map((option, optIdx) => (
-                                        <p key={optIdx} className={option === q.correctAnswer ? "text-green-600" : ""}>
-                                            {String.fromCharCode(65 + optIdx)}. {option}
-                                        </p>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                            </div>
+                        ))}
 
+                        <button
+                            type="button"
+                            onClick={addQuestion}
+                            className="bg-white border-2 border-dashed border-blue-300 text-blue-600 px-4 py-3 rounded-lg hover:bg-blue-50 w-full flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Tambah Pertanyaan
+                        </button>
+                    </div>
 
-                {newQuiz.questions.length > 0 && (
-                    <Button
-                        onClick={saveQuiz}
-                        className="w-full mt-6 bg-blue-950"
-                    >
-                        Save Quiz
-                    </Button>
-                )}
+                    <div className="space-y-2">
+                        <button
+                            type="submit"
+                            disabled={!isFormValid}
+                            className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${isFormValid
+                                ? "bg-green-600 hover:bg-green-700 text-white"
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                }`}
+                        >
+                            <Save className="w-5 h-5" />
+                            {isFormValid ? "Simpan Soal" : "Isi semua informasi telebih dahulu"}
+                        </button>
+
+                        {/* Validation message */}
+                        {!isFormValid && (
+                            <div className="text-center">
+                                <p className="text-orange-500 text-sm mt-2">
+                                    {getValidationMessage()}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Form completion status */}
+                        <div className="flex justify-center items-center gap-2 text-sm text-gray-500 mt-2">
+                            <div className="flex items-center gap-1">
+                                <Info className="w-4 h-4" />
+                                <span>Form Status:</span>
+                            </div>
+                            <span className={`font-medium ${isFormValid ? "text-green-600" : "text-orange-500"}`}>
+                                {isFormValid ? "Ready to Submit" : "Incomplete"}
+                            </span>
+                        </div>
+                    </div>
+                </form>
             </div>
         );
     };
@@ -585,63 +810,154 @@ const QuizApp = () => {
             }));
         };
 
+        const progress = ((currentQuestion + 1) / currentQuiz.questions.length) * 100;
+
+        const isTimeWarning = timeLeft < 300;
+        const isTimeCritical = timeLeft < 60;
+
         const currentQuestionData = currentQuiz.questions[currentQuestion];
 
         return (
-            <div className="p-6 max-w-3xl mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold text-blue-950">{currentQuiz.title}</h1>
-                    <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-2">
-                            <Timer className="w-4 h-4" />
-                            {formatTime(timeLeft)}
-                        </span>
-                        <span className="flex items-center gap-2">
-                            <AlignLeft className="w-4 h-4" />
-                            {currentQuestion + 1}/{currentQuiz.questions.length}
-                        </span>
+            <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+                {/* Top Navigation Bar */}
+                <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-4 mb-6">
+                    <div className="flex justify-between items-center">
+                        <Button onClick={() => setPage('quizList')} className="my-5 bg-blue-950"><ArrowLeft/></Button>
+                        <h1 className="text-2xl font-bold text-blue-950 truncate">
+                            {currentQuiz.title}
+                        </h1>
+                        {/* Timer with dynamic styling */}
+                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${isTimeCritical ? 'bg-red-100 text-red-700 animate-pulse' :
+                            isTimeWarning ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-blue-100 text-blue-700'
+                            }`}>
+                            <Clock className="w-5 h-5" />
+                            <span className="font-semibold">{formatTime(timeLeft)}</span>
+                        </div>
                     </div>
                 </div>
 
-                <Card>
-                    <CardContent className="pt-6 space-y-4">
-                        <p className="text-lg font-medium">{currentQuestionData.question}</p>
+                {/* Progress Bar and Question Counter */}
+                <div className="max-w-4xl mx-auto mb-6">
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-gray-600">
+                            Pertanyaan {currentQuestion + 1} dari {currentQuiz.questions.length}
+                        </span>
+                        <span className="text-sm font-medium text-gray-600">
+                            {progress.toFixed(0)}% selesai
+                        </span>
+                    </div>
+                    <Progress value={progress} className="h-2" />
+                </div>
 
-                        <RadioGroup
-                            value={userAnswers[currentQuestion] || ""}
-                            onValueChange={handleAnswer}
-                        >
-                            {currentQuestionData.options.map((option, idx) => (
-                                <div key={idx} className="flex items-center space-x-2">
-                                    <RadioGroupItem value={option} id={`answer${idx}`} />
-                                    <Label htmlFor={`answer${idx}`}>{option}</Label>
+                {/* Main Question Card */}
+                <div className="max-w-4xl mx-auto">
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                        {/* Question Header */}
+                        <div className="p-6 bg-blue-50 border-b border-blue-100">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0">
+                                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <HelpCircle className="w-5 h-5 text-blue-600" />
+                                    </div>
                                 </div>
+                                <p className="text-lg font-medium text-gray-800 leading-relaxed">
+                                    {currentQuestionData.question}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Answer Options */}
+                        <div className="p-6">
+                            <RadioGroup
+                                value={userAnswers[currentQuestion] || ""}
+                                onValueChange={handleAnswer}
+                                className="space-y-4"
+                            >
+                                {currentQuestionData.options.map((option, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`relative flex items-center p-4 rounded-lg transition-all ${userAnswers[currentQuestion] === option
+                                            ? 'bg-blue-50 border-2 border-blue-500'
+                                            : 'border-2 border-gray-200 hover:border-blue-200 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        <RadioGroupItem
+                                            value={option}
+                                            id={`answer${idx}`}
+                                            className="absolute left-4"
+                                        />
+                                        <Label
+                                            htmlFor={`answer${idx}`}
+                                            className="flex-grow ml-8 cursor-pointer font-medium text-gray-700"
+                                        >
+                                            {option}
+                                        </Label>
+                                    </div>
+                                ))}
+                            </RadioGroup>
+                        </div>
+
+                        {/* Navigation Footer */}
+                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                            <div className="flex justify-between items-center">
+                                <Button
+                                    onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
+                                    disabled={currentQuestion === 0}
+                                    variant="outline"
+                                    className="flex items-center gap-2"
+                                >
+                                    <ArrowLeft className="w-4 h-4" />
+                                    Previous
+                                </Button>
+
+                                <div className="flex items-center gap-2">
+                                    {currentQuestion === currentQuiz.questions.length - 1 ? (
+                                        <Button
+                                            onClick={() => {
+                                                saveQuizScore(currentQuiz._id, score);
+                                                setPage('results');
+                                            }}
+                                            className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+                                        >
+                                            Submit Quiz
+                                            <ArrowRight className="w-4 h-4" />
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            onClick={() => setCurrentQuestion(prev => prev + 1)}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+                                        >
+                                            Next
+                                            <ArrowRight className="w-4 h-4" />
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Question Navigation Pills */}
+                    <div className="mt-6 p-4 bg-white rounded-lg shadow-sm">
+                        <div className="flex flex-wrap gap-2 justify-center">
+                            {currentQuiz.questions.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setCurrentQuestion(idx)}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all
+                                    ${idx === currentQuestion
+                                            ? 'bg-blue-600 text-white'
+                                            : userAnswers[idx]
+                                                ? 'bg-green-100 text-green-800 border-2 border-green-300'
+                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        }`}
+                                >
+                                    {idx + 1}
+                                </button>
                             ))}
-                        </RadioGroup>
-                    </CardContent>
-                    <CardFooter className="flex justify-between mt-4">
-                        <Button
-                            onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
-                            disabled={currentQuestion === 0}
-                            className="bg-blue-950"
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            className="bg-blue-950"
-                            onClick={() => {
-                                if (currentQuestion < currentQuiz.questions.length - 1) {
-                                    setCurrentQuestion(prev => prev + 1);
-                                } else {
-                                    saveQuizScore(currentQuiz._id, score);
-                                    setPage('results');
-                                }
-                            }}
-                        >
-                            {currentQuestion === currentQuiz.questions.length - 1 ? 'Submit' : 'Next'}
-                        </Button>
-                    </CardFooter>
-                </Card>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     };

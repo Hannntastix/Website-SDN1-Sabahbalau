@@ -11,7 +11,7 @@ const Navbar = async () => {
     return (
         <nav className='sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-200 shadow-sm'>
             <div className='poppins mx-auto max-w-screen-xl p-4 sm:px-8 sm:py-5 lg:px-10'>
-                <div className='sm:flex sm:items-center sm:justify-between'>
+                <div className='md:flex sm:items-center sm:justify-between'>
                     <div className='text-center sm:text-left'>
                         <a className='flex gap-1 items-center'>
                             <h2 className='text-2xl font-bold flex gap-2 text-slate-700'>
@@ -20,12 +20,12 @@ const Navbar = async () => {
                         </a>
                     </div>
 
-                    <div className='mt-4 flex flex-row gap-4 sm:mt-0 sm:flex-row sm:items-center'>
+                    <div className='mt-4 flex-col gap-4 sm:mt-0 md:flex-row sm:items-center flex'>
                         {user ? (
                             <>
                                 {isAdmin ?
                                     <>
-                                        <Link href="/configure/createQuiz" className={buttonVariants({
+                                        <Link href="/configure/quiz" className={buttonVariants({
                                             size: "sm",
                                             variant: "ghost",
                                         })}>
@@ -39,7 +39,7 @@ const Navbar = async () => {
                                         </Link>
                                     </>
                                     : null}
-                                <div className='h-8 w-px bg-zinc-200 hidden sm:block' />
+                                <div className='h-8 w-px bg-zinc-200 hidden md:block' />
                                 <Link href="/" className={buttonVariants({
                                     size: "sm",
                                     variant: "ghost",

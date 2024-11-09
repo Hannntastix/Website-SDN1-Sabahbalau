@@ -8,18 +8,39 @@ import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
 import { saveSchoolInfo, getSchoolInfo } from "../../utlis/localStorage"
 import { defaultSchoolInfo } from "../components/DefaultSchoolInfo"
+import LoadingModal from '../components/ui/LoadingModal';
 
 
 const SchoolWebsiteDashboard = () => {
 
   const [schoolInfo, setSchoolInfo] = useState(defaultSchoolInfo);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchSchoolInfo = async () => {
+    try {
+      const savedInfo = await getSchoolInfo();
+      setSchoolInfo(savedInfo);
+    } catch (err) {
+      setError("Gagal memuat data sekolah.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const savedInfo = getSchoolInfo();
-    if (savedInfo) {
-      setSchoolInfo(savedInfo);
-    }
+    setLoading(true);
+    fetchSchoolInfo();
   }, []);
+
+
+  if (loading) {
+    return <LoadingModal />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const handleSubmit = () => {
     saveSchoolInfo(schoolInfo);

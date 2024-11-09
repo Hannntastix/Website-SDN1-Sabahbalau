@@ -1,6 +1,5 @@
 export async function GET() {
     try {
-        // Implementation of your API route
         const quizzes = [
             {
                 title: {

@@ -657,7 +657,7 @@ const QuizApp = () => {
                                 className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:border-blue-200 transition-all">
                                 <div className="flex justify-between items-center mb-6">
                                     <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                                        Question {questionIndex + 1}
+                                        Soal No. {questionIndex + 1}
                                         {questionIndex === 0 && (
                                             <span className="bg-yellow-100 text-yellow-800 text-xs py-1 px-2 rounded-full">
                                                 Diperlukan Minimal 1 Soal
@@ -920,7 +920,7 @@ const QuizApp = () => {
                                             }}
                                             className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
                                         >
-                                            Submit Quiz
+                                            Submit
                                             <ArrowRight className="w-4 h-4" />
                                         </Button>
                                     ) : (

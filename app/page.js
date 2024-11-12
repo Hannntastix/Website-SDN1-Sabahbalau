@@ -113,7 +113,7 @@ const Home = () => {
             {[1, 2, 3, 4, 5, 6].map((_, index) => (
               <div key={index} className="aspect-video bg-slate-200 rounded-lg overflow-hidden">
                 <img
-                  src={`/api/placeholder/800/600`}
+                  src={`/assets/school_galeri1.jpg`}
                   alt={`Aktivitas Sekolah ${index + 1}`}
                   className="w-full h-full object-cover"
                 />
@@ -131,7 +131,7 @@ const Home = () => {
             href="/configure/quiz"
             className="inline-block bg-white text-blue-500 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors shadow-lg"
           >
-          Halaman Daftar Soal
+            Halaman Daftar Soal
           </Link>
         </div>
       </section>
@@ -142,14 +142,14 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h3 className="text-xl font-semibold mb-4">Kontak</h3>
-              <p>Jl. ... No. 123</p>
-              <p>Kota Lampung Selatan, 12345</p>
-              <p>Telp: (021) 123-4567</p>
-              <p>Email: rehan121203@gmail.com</p>
+              <p>Jl. Jl. M. Azizy, Sabah Balau, Kec. Tj. Bintang</p>
+              <p>Kota Lampung Selatan, 35365</p>
+              <p>Telp: (+62)85810355240</p>
+              <p>Email: sdn1sabahbalau@yahoo.co.id</p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-4">Jam Operasional</h3>
-              <p>Senin - Jumat: 07:00 - 15:00</p>
+              <p>Senin - Jumat: 07:00 - 13:00</p>
               <p>Sabtu: 07:00 - 12:00</p>
               <p>Minggu: Tutup</p>
             </div>

@@ -314,7 +314,7 @@ const QuizApp = () => {
                                     <p className="text-lg text-gray-600 text-center mb-4">
                                         {!Array.isArray(quizzes) || quizzes.length === 0
                                             ? "Silakan tambahkan paket soal untuk memulai."
-                                            : `Silakan hubungi guru anda untuk informasi lebih lanjut 🙌`}
+                                            : `Silahkan hubungi guru anda untuk informasi lebih lanjut 🙌`}
                                     </p>
                                     {/* Button ini harusnya dihapus ketika bukan admin yang akses */}
                                     <button
@@ -789,10 +789,10 @@ const QuizApp = () => {
                         <div className="flex justify-center items-center gap-2 text-sm text-gray-500 mt-2">
                             <div className="flex items-center gap-1">
                                 <Info className="w-4 h-4" />
-                                <span>Form Status:</span>
+                                <span>Status Formulir:</span>
                             </div>
                             <span className={`font-medium ${isFormValid ? "text-green-600" : "text-orange-500"}`}>
-                                {isFormValid ? "Ready to Submit" : "Incomplete"}
+                                {isFormValid ? "Ready to Submit" : "Belum Lengkap"}
                             </span>
                         </div>
                     </div>
@@ -822,7 +822,7 @@ const QuizApp = () => {
                 {/* Top Navigation Bar */}
                 <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-4 mb-6">
                     <div className="flex justify-between items-center">
-                        <Button onClick={() => setPage('quizList')} className="my-5 bg-blue-950"><ArrowLeft/></Button>
+                        <Button onClick={() => setPage('quizList')} className="my-5 bg-blue-950"><ArrowLeft /></Button>
                         <h1 className="text-2xl font-bold text-blue-950 truncate">
                             {currentQuiz.title}
                         </h1>
@@ -982,6 +982,14 @@ const QuizApp = () => {
                     ? "Good effort! Keep practicing! 💪"
                     : "Keep learning! You'll do better next time! 📚";
 
+        // const scoreMessage = score === 100
+        // ? "Wow, kamu dapat nilai 100! Kamu hebat sekali! 🎉"
+        // : score >= 80
+        //     ? "Wah, hebat banget! Nilaimu luar biasa! Terus rajin belajar, ya, biar makin pintar! 🌟"
+        //     : score >= 60
+        //         ? "Bagus! Nilaimu sudah keren! Terus semangat belajar supaya bisa lebih tinggi lagi! 💪"
+        //         : "Jangan sedih, ya! Kamu sudah berusaha dengan baik. Yuk, belajar lagi biar nanti hasilnya makin bagus! 📚";
+
         return (
             <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-6">
                 <Card className="max-w-3xl mx-auto shadow-lg py-5">
@@ -1005,8 +1013,8 @@ const QuizApp = () => {
                         {/* Progress Bar */}
                         <div className="mb-8">
                             <div className="flex justify-between text-sm text-gray-600 mb-2">
-                                <span>Progress</span>
-                                <span>{correctAnswersCount} of {currentQuiz.questions.length} correct</span>
+                                <span>Indikator Progres Pengerjaan Soal</span>
+                                <span>Benar {correctAnswersCount} dari {currentQuiz.questions.length} soal</span>
                             </div>
                             <Progress value={score} className="h-3" />
                         </div>
@@ -1015,17 +1023,17 @@ const QuizApp = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                             <div className="bg-blue-50 p-4 rounded-lg text-center">
                                 <Target className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-                                <p className="text-sm text-gray-600">Accuracy</p>
+                                <p className="text-sm text-gray-600">Akurasi</p>
                                 <p className="text-xl font-bold text-gray-800">{Math.round(score)}%</p>
                             </div>
                             <div className="bg-blue-50 p-4 rounded-lg text-center">
                                 <BookOpen className="w-6 h-6 text-green-500 mx-auto mb-2" />
-                                <p className="text-sm text-gray-600">Correct</p>
+                                <p className="text-sm text-gray-600">Benar</p>
                                 <p className="text-xl font-bold text-gray-800">{correctAnswersCount}</p>
                             </div>
                             <div className="bg-blue-50 p-4 rounded-lg text-center">
                                 <Frown className="w-6 h-6 text-red-500 mx-auto mb-2" />
-                                <p className="text-sm text-gray-600">Incorrect</p>
+                                <p className="text-sm text-gray-600">Salah</p>
                                 <p className="text-xl font-bold text-gray-800">{currentQuiz.questions.length - correctAnswersCount}</p>
                             </div>
                         </div>

@@ -25,12 +25,6 @@ const Navbar = async () => {
                             <>
                                 {isAdmin ?
                                     <>
-                                        <Link href="/configure/quiz" className={buttonVariants({
-                                            size: "sm",
-                                            variant: "ghost",
-                                        })}>
-                                            Tambahkan Soal
-                                        </Link>
                                         <Link href="/dashboard" className={buttonVariants({
                                             size: "sm",
                                             variant: "ghost",

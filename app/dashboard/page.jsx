@@ -277,17 +277,6 @@ const SchoolWebsiteDashboard = () => {
       </Card>
 
       {/* Preview Perubahan */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pratinjau Data</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {/* <pre className="bg-slate-100 p-4 rounded-lg overflow-x-auto">
-            {JSON.stringify(schoolInfo, null, 2)}
-          </pre> */}
-          <p className='font-2xl font-semibold text-center'>website sedang dalam pembangunan...</p>
-        </CardContent>
-      </Card>
       <div className="text-center mt-6">
         <button
           onClick={handleSubmit}

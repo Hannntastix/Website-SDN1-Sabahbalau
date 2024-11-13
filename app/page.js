@@ -5,11 +5,27 @@ import { getSchoolInfo } from '../utlis/localStorage';
 import { defaultSchoolInfo } from './components/DefaultSchoolInfo';
 import Link from 'next/link';
 import LoadingModal from './components/ui/LoadingModal';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { useRouter } from 'next/navigation';
+import LoginModal from './components/ui/LoginModal';
+import { Button } from '@/components/ui/button';
 
 const Home = () => {
   const [schoolInfo, setSchoolInfo] = useState(defaultSchoolInfo);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { user } = useKindeBrowserClient();
+
+  const router = useRouter();
+
+  const handleNavigate = () => {
+    if (user) {
+      router.push('/configure/quiz')
+    } else {
+      setIsModalOpen(true)
+    }
+  }
 
   const fetchSchoolInfo = async () => {
     try {
@@ -53,14 +69,16 @@ const Home = () => {
                 {schoolInfo.description}
               </p>
               <div className="pt-4 md:text-left text-center">
-                <Link
-                  href="/configure/quiz"
+                <button
                   className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 sm:px-8 py-3 rounded-lg transition-colors shadow-lg"
+                  onClick={() => handleNavigate()}
                 >
                   Halaman Daftar Soal
-                </Link>
+                </button>
               </div>
             </div>
+
+            <LoginModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
 
             {/* Image */}
             <div className="hidden md:flex justify-center lg:justify-end">
@@ -127,12 +145,12 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Siap Untuk Mengerjakan Latihan Soal?</h2>
           <p className="text-white mb-8 text-lg">Uji pemahamanmu dengan mengerjakan latihan soal yang berkualitas.</p>
-          <Link
-            href="/configure/quiz"
+          <button
             className="inline-block bg-white text-blue-500 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors shadow-lg"
+            onClick={() => handleNavigate()}
           >
             Halaman Daftar Soal
-          </Link>
+          </button>
         </div>
       </section>
 

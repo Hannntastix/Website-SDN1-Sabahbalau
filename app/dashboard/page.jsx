@@ -108,7 +108,7 @@ const SchoolWebsiteDashboard = () => {
 
   return (
     <div className="p-6 bg-slate-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Dasboard Manajemen Konten Sekolah</h1>
+      <h1 className="text-3xl font-bold mb-6">Dashboard Manajemen Konten Sekolah</h1>
 
       {/* Informasi Dasar Sekolah */}
       <Card className="mb-6">

@@ -808,7 +808,7 @@ const QuizApp = () => {
                 {/* Top Navigation Bar */}
                 <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-4 mb-6">
                     <div className="flex justify-between items-center">
-                        <Button onClick={() => setPage('quizList')} className="my-5 bg-blue-950"><ArrowLeft /></Button>
+                        <Button onClick={() => setPage('quizList')} className="my-5 bg-blue-950 mx-2"><ArrowLeft /></Button>
                         <h1 className="text-2xl font-bold text-blue-950 truncate">
                             {currentQuiz.title}
                         </h1>

@@ -9,6 +9,7 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { useRouter } from 'next/navigation';
 import LoginModal from './components/ui/LoginModal';
 import { Button } from '@/components/ui/button';
+import MyMap from './components/MyMap';
 
 const Home = () => {
   const [schoolInfo, setSchoolInfo] = useState(defaultSchoolInfo);
@@ -125,7 +126,7 @@ const Home = () => {
 
       {/* Gallery Section */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto md:px-4 px-2">
           <h2 className="text-3xl font-bold text-center mb-12 text-zinc-600 ">Galeri Sekolah</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((_, index) => (
@@ -140,6 +141,22 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <div className="my-10 flex flex-col justify-center items-center mx-auto px-4">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-400 px-6 py-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full max-w-xl text-center">
+          <h1 className="font-extrabold text-4xl text-white mb-4 tracking-wide">
+            Lokasi SDN 1 SabahBalau
+          </h1>
+          <p className="text-white text-sm opacity-90">
+            Temukan lokasi sekolah dengan mudah melalui peta interaktif di bawah ini.
+          </p>
+        </div>
+        <div className="mt-8 w-full max-w-3xl">
+          <MyMap />
+        </div>
+      </div>
+
+
 
       <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-400 mb-20">
         <div className="max-w-7xl mx-auto px-4 text-center">

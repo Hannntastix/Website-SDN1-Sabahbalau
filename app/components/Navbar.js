@@ -15,7 +15,7 @@ const Navbar = async () => {
                     <div className='text-center sm:text-left'>
                         <a className='flex gap-1 items-center'>
                             <h2 className='text-2xl font-bold flex gap-2 text-slate-700'>
-                                SDN 1 <span className='text-green-700 lg:text-blue-700'>Sabahbalau</span>
+                                SDN 1 <span className='text-blue-700'>Sabahbalau</span>
                             </h2>
                         </a>
                     </div>

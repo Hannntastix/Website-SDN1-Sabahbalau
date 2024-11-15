@@ -151,241 +151,228 @@ const QuizApp = () => {
         }, [quizzes, selectedGrade]);
 
         return (
-            <>
-                {user ? (
-                    <>
-                        <div className="p-6">
-                            <div className="md:justify-end flex justify-center  items-center mb-6">
-                                {user ? (
-                                    <>
-                                        {isAdmin ? (
-                                            <Button
-                                                onClick={() => setPage('createQuestion')}
-                                                className="bg-blue-950 flex items-center gap-2"
-                                            >
-                                                <PlusCircle className="w-4 h-4" />
-                                                Tambah Paket Soal
-                                            </Button>
-                                        ) : null}
-                                    </>
-                                ) : null}
-                            </div>
+            <div className="p-6">
+                <div className="md:justify-end flex justify-center  items-center mb-6">
+                    {user ? (
+                        <>
+                            {isAdmin ? (
+                                <Button
+                                    onClick={() => setPage('createQuestion')}
+                                    className="bg-blue-950 flex items-center gap-2"
+                                >
+                                    <PlusCircle className="w-4 h-4" />
+                                    Tambah Paket Soal
+                                </Button>
+                            ) : null}
+                        </>
+                    ) : null}
+                </div>
 
-                            <div className="max-w-7xl mx-auto px-4">
-                                {/* Header */}
-                                <div className="text-center mb-12">
-                                    <h1 className="text-4xl font-bold text-slate-600 mb-4">Daftar Paket Soal</h1>
-                                    <p className="text-gray-600 max-w-2xl mx-auto">
-                                        Pilih paket soal sesuai dengan tingkat kelas dan mata pelajaran yang ingin anda pelajari
-                                    </p>
-                                </div>
+                <div className="max-w-7xl mx-auto px-4">
+                    {/* Header */}
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-bold text-slate-600 mb-4">Daftar Paket Soal</h1>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            Pilih paket soal sesuai dengan tingkat kelas dan mata pelajaran yang ingin anda pelajari
+                        </p>
+                    </div>
 
-                                {/* Grade Selection */}
-                                <div className="flex justify-center mb-8">
-                                    <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
-                                        {['4', '5', '6'].map((grade) => (
-                                            <button
-                                                key={grade}
-                                                className={`px-8 py-2 rounded-md text-sm font-medium transition-colors
+                    {/* Grade Selection */}
+                    <div className="flex justify-center mb-8">
+                        <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
+                            {['4', '5', '6'].map((grade) => (
+                                <button
+                                    key={grade}
+                                    className={`px-8 py-2 rounded-md text-sm font-medium transition-colors
                                 ${selectedGrade === grade
-                                                        ? 'bg-blue-800 text-white'
-                                                        : 'text-gray-500 hover:text-gray-700'
-                                                    }`}
-                                                onClick={() => setSelectedGrade(grade)}
+                                            ? 'bg-blue-800 text-white'
+                                            : 'text-gray-500 hover:text-gray-700'
+                                        }`}
+                                    onClick={() => setSelectedGrade(grade)}
+                                >
+                                    Kelas {grade}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Quiz Grid */}
+                    {Array.isArray(filteredQuizzes) && filteredQuizzes.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredQuizzes.map((quiz) => {
+
+                                return (
+                                    <div
+                                        key={quiz._id}
+                                        className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 relative"
+                                    >
+                                        {/* Subject Badge */}
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                                {quiz.description || 'No Description'}
+                                            </span>
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(quiz.difficulty)}`}>
+                                                {quiz.difficulty || 'Default'}
+                                            </span>
+                                        </div>
+
+                                        {/* Quiz Info */}
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                                            {quiz.title || 'Untitled Quiz'}
+                                        </h3>
+
+                                        {quizScores[quiz._id] !== undefined ? (
+                                            <>
+                                                {score < 65 ? (
+                                                    <>
+                                                        <p className=' font-semibold text-red-800'>Nilai terakhir: {score}</p>
+                                                        <p className='mb-2 font-normal text-red-800'>Ayo tingkatkan lagi nilaimu!</p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <p className=' font-semibold text-blue-800'>Nilai terakhir: {score}</p>
+                                                        <p className='mb-2 font-normal text-blue-800'>Good Job!</p>
+                                                    </>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <p className='my-3 font-semibold text-slate-500'>Nilai terakhir: -</p>
+                                        )}
+
+                                        <span className="inline-flex mb-4 items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                            Kelas {quiz.grade || 'No Description'}
+                                        </span>
+
+                                        <div className="space-y-2 mb-6">
+                                            <div className="flex items-center text-gray-600">
+                                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>{quiz.duration || 0} Menit</span>
+                                            </div>
+                                            <div className="flex items-center text-gray-600">
+                                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>{quiz.questions?.length || 0} Pertanyaan</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex space-x-4">
+                                            <button
+                                                className="flex-1 text-center bg-blue-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+                                                onClick={() => {
+                                                    setCurrentQuiz(quiz);
+                                                    setTimeLeft(quiz.duration * 60);
+                                                    setCurrentQuestion(0);
+                                                    setPage('takeQuiz');
+                                                }}
                                             >
-                                                Kelas {grade}
+                                                Mulai Latihan
                                             </button>
-                                        ))}
+                                            {/* button dibawah ini harusnya dihapus ketika bukan admin akses */}
+                                            {user ? (
+                                                <>
+                                                    {isAdmin ? (
+                                                        <RemoveBtn id={quiz._id} />
+                                                    ) : null}
+                                                </>
+                                            ) : null}
+                                        </div>
                                     </div>
-                                </div>
-
-                                {/* Quiz Grid */}
-                                {Array.isArray(filteredQuizzes) && filteredQuizzes.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {filteredQuizzes.map((quiz) => {
-
-                                            return (
-                                                <div
-                                                    key={quiz._id}
-                                                    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 relative"
-                                                >
-                                                    {/* Subject Badge */}
-                                                    <div className="flex justify-between items-start mb-4">
-                                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                                            {quiz.description || 'No Description'}
-                                                        </span>
-                                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(quiz.difficulty)}`}>
-                                                            {quiz.difficulty || 'Default'}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* Quiz Info */}
-                                                    <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                                                        {quiz.title || 'Untitled Quiz'}
-                                                    </h3>
-
-                                                    {quizScores[quiz._id] !== undefined ? (
-                                                        <>
-                                                            {score < 65 ? (
-                                                                <>
-                                                                    <p className=' font-semibold text-red-800'>Nilai terakhir: {score}</p>
-                                                                    <p className='mb-2 font-normal text-red-800'>Ayo tingkatkan lagi nilaimu!</p>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <p className=' font-semibold text-blue-800'>Nilai terakhir: {score}</p>
-                                                                    <p className='mb-2 font-normal text-blue-800'>Good Job!</p>
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        <p className='my-3 font-semibold text-slate-500'>Nilai terakhir: -</p>
-                                                    )}
-
-                                                    <span className="inline-flex mb-4 items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                                        Kelas {quiz.grade || 'No Description'}
-                                                    </span>
-
-                                                    <div className="space-y-2 mb-6">
-                                                        <div className="flex items-center text-gray-600">
-                                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                            </svg>
-                                                            <span>{quiz.duration || 0} Menit</span>
-                                                        </div>
-                                                        <div className="flex items-center text-gray-600">
-                                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                            </svg>
-                                                            <span>{quiz.questions?.length || 0} Pertanyaan</span>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Action Buttons */}
-                                                    <div className="flex space-x-4">
-                                                        <button
-                                                            className="flex-1 text-center bg-blue-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition-colors"
-                                                            onClick={() => {
-                                                                setCurrentQuiz(quiz);
-                                                                setTimeLeft(quiz.duration * 60);
-                                                                setCurrentQuestion(0);
-                                                                setPage('takeQuiz');
-                                                            }}
-                                                        >
-                                                            Mulai Latihan
-                                                        </button>
-                                                        {/* button dibawah ini harusnya dihapus ketika bukan admin akses */}
-                                                        {user ? (
-                                                            <>
-                                                                {isAdmin ? (
-                                                                    <RemoveBtn id={quiz._id} />
-                                                                ) : null}
-                                                            </>
-                                                        ) : null}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-1 gap-3">
-                                        <div className="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 w-full max-w-xl mx-auto p-6 rounded-lg shadow-lg">
-                                            <div className="flex flex-col items-center">
-                                                <FaInfoCircle className="text-5xl text-blue-500 mb-4 animate-bounce" />
-                                                <h1 className="text-2xl text-gray-800 font-semibold text-center mb-2">
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-3">
+                            <div className="bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 w-full max-w-xl mx-auto p-6 rounded-lg shadow-lg">
+                                <div className="flex flex-col items-center">
+                                    <FaInfoCircle className="text-5xl text-blue-500 mb-4 animate-bounce" />
+                                    <h1 className="text-2xl text-gray-800 font-semibold text-center mb-2">
+                                        {!Array.isArray(quizzes) || quizzes.length === 0
+                                            ? "Anda Belum Menambahkan Paket Soal"
+                                            : `Belum ada paket soal untuk kelas ${selectedGrade}`}
+                                    </h1>
+                                    {user ? (
+                                        <>
+                                            {!isAdmin ? (
+                                                <p className="text-lg text-gray-600 text-center mb-4">
                                                     {!Array.isArray(quizzes) || quizzes.length === 0
-                                                        ? "Anda Belum Menambahkan Paket Soal"
-                                                        : `Belum ada paket soal untuk kelas ${selectedGrade}`}
-                                                </h1>
-                                                {user ? (
-                                                    <>
-                                                        {!isAdmin ? (
-                                                            <p className="text-lg text-gray-600 text-center mb-4">
-                                                                {!Array.isArray(quizzes) || quizzes.length === 0
-                                                                    ? "Silahkan tambahkan paket soal untuk memulai."
-                                                                    : `Silahkan hubungi guru anda untuk informasi lebih lanjut 🙌`}
-                                                            </p>
-                                                        ) : null}
-                                                    </>
-                                                ) : null}
-                                                {/* Button ini harusnya dihapus ketika bukan admin yang akses */}
-                                                {user ? (
-                                                    <>
-                                                        {isAdmin ? (
-                                                            <>
-                                                                <p className="text-lg text-gray-600 text-center mb-4">
-                                                                    {!Array.isArray(quizzes) || quizzes.length === 0
-                                                                        ? "Silahkan tambahkan paket soal untuk memulai."
-                                                                        : `Silahkan tambahkan paket soal.`}
-                                                                </p>
-                                                                <button
-                                                                    onClick={() => setPage('createQuestion')}
-                                                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
-                                                                >
-                                                                    Tambah Paket Soal
-                                                                </button>
-                                                            </>
-                                                        ) : null}
-                                                    </>
-                                                ) : null}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className='max-w-7xl mx-auto px-4'>
-                                {/* Info Section */}
-                                <div className="mt-12 bg-white rounded-xl p-6 shadow-sm">
-                                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Informasi Quiz</h2>
-                                    <div className="grid md:grid-cols-3 gap-6">
-                                        <div className="flex items-start space-x-3">
-                                            <div className="flex-shrink-0">
-                                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 className="font-medium text-gray-800">Nilai Langsung</h3>
-                                                <p className="text-gray-600 text-sm">Dapatkan hasil dan pembahasan segera setelah selesai</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start space-x-3">
-                                            <div className="flex-shrink-0">
-                                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 className="font-medium text-gray-800">Bisa Diulang</h3>
-                                                <p className="text-gray-600 text-sm">Ulangi kuis untuk meningkatkan pemahaman</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start space-x-3">
-                                            <div className="flex-shrink-0">
-                                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 className="font-medium text-gray-800">Pembahasan Lengkap</h3>
-                                                <p className="text-gray-600 text-sm">Pelajari dari pembahasan detail setiap soal</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                        ? "Silahkan tambahkan paket soal untuk memulai."
+                                                        : `Silahkan hubungi guru anda untuk informasi lebih lanjut 🙌`}
+                                                </p>
+                                            ) : null}
+                                        </>
+                                    ) : null}
+                                    {/* Button ini harusnya dihapus ketika bukan admin yang akses */}
+                                    {user ? (
+                                        <>
+                                            {isAdmin ? (
+                                                <>
+                                                    <p className="text-lg text-gray-600 text-center mb-4">
+                                                        {!Array.isArray(quizzes) || quizzes.length === 0
+                                                            ? "Silahkan tambahkan paket soal untuk memulai."
+                                                            : `Silahkan tambahkan paket soal.`}
+                                                    </p>
+                                                    <button
+                                                        onClick={() => setPage('createQuestion')}
+                                                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300"
+                                                    >
+                                                        Tambah Paket Soal
+                                                    </button>
+                                                </>
+                                            ) : null}
+                                        </>
+                                    ) : null}
                                 </div>
                             </div>
                         </div>
-                    </>
-                ) : (
-                    <>
-                        <div className='flex flex-col justify-center items-center mx-auto h-screen gap-3'>
-                            <h1 className='text-center font-bold text-3xl'>Please Log In First!</h1>
-                            <p className='text-zinc-500 font-semibold text-lg'>404 Not Found</p>
+                    )}
+                </div>
+
+                <div className='max-w-7xl mx-auto px-4'>
+                    {/* Info Section */}
+                    <div className="mt-12 bg-white rounded-xl p-6 shadow-sm">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Informasi Quiz</h2>
+                        <div className="grid md:grid-cols-3 gap-6">
+                            <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-800">Nilai Langsung</h3>
+                                    <p className="text-gray-600 text-sm">Dapatkan hasil dan pembahasan segera setelah selesai</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-800">Bisa Diulang</h3>
+                                    <p className="text-gray-600 text-sm">Ulangi kuis untuk meningkatkan pemahaman</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-800">Pembahasan Lengkap</h3>
+                                    <p className="text-gray-600 text-sm">Pelajari dari pembahasan detail setiap soal</p>
+                                </div>
+                            </div>
                         </div>
-                    </>
-                )}
-            </>
+                    </div>
+                </div>
+            </div>
         )
     };
 
@@ -789,6 +776,13 @@ const QuizApp = () => {
 
     // Take Quiz Page Component
     const TakeQuiz = (score) => {
+        useEffect(() => {
+            if (timeLeft === 0) {
+                saveQuizScore(currentQuiz._id, score);
+                setPage('results');
+            }
+        }, [timeLeft]);
+
         const handleAnswer = (answer) => {
             setUserAnswers(prev => ({
                 ...prev,
@@ -947,6 +941,7 @@ const QuizApp = () => {
             </div>
         );
     };
+
 
 
     const Results = ({ setScore }) => {

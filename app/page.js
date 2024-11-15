@@ -3,12 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { getSchoolInfo } from '../utlis/localStorage';
 import { defaultSchoolInfo } from './components/DefaultSchoolInfo';
-import Link from 'next/link';
 import LoadingModal from './components/ui/LoadingModal';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { useRouter } from 'next/navigation';
 import LoginModal from './components/ui/LoginModal';
-import { Button } from '@/components/ui/button';
 import MyMap from './components/MyMap';
 
 const Home = () => {

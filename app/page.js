@@ -71,7 +71,7 @@ const Home = () => {
                 Hai, Selamat Datang di
               </h1>
               <h2 className="text-blue-500 text-4xl md:text-left text-center xl:text-5xl font-bold">
-                Website {schoolInfo.name}
+                Website SDN 1 SabahBalau
               </h2>
               <p className="text-lg sm:text-xl md:text-left text-center leading-relaxed">
                 {schoolInfo.description}
@@ -281,7 +281,7 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-slate-700 text-center">
-            <p>&copy; 2024 {schoolInfo.name}.</p>
+            <p>&copy; 2024 SDN 1 Sabahbalau.</p>
           </div>
         </div>
       </footer>

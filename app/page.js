@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import { getSchoolInfo } from '../utlis/localStorage';
+import { getSchoolInfo } from '../utlis/LocalStorage';
 import { defaultSchoolInfo } from './components/DefaultSchoolInfo';
 import LoadingModal from './components/ui/LoadingModal';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';

@@ -71,10 +71,10 @@ const Home = () => {
                 Hai, Selamat Datang di
               </h1>
               <h2 className="text-blue-500 text-4xl md:text-left text-center xl:text-5xl font-bold">
-                Website SDN 1 SabahBalau
+                Website {defaultSchoolInfo.name}
               </h2>
               <p className="text-lg sm:text-xl md:text-left text-center leading-relaxed">
-                {schoolInfo.description}
+                {defaultSchoolInfo.description}
               </p>
               <div className="pt-4 md:text-left text-center">
                 <button
@@ -104,7 +104,7 @@ const Home = () => {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {schoolInfo.stats.map((stat, index) => (
+            {defaultSchoolInfo.stats.map((stat, index) => (
               <div key={index} className="text-center p-6 rounded-lg bg-slate-50 shadow-sm">
                 <div className="text-3xl font-bold text-blue-500">{stat.value}</div>
                 <div className="text-blue-400">{stat.label}</div>
@@ -119,7 +119,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl text-zinc-600 font-bold text-center mb-12">Fasilitas Unggulan</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {schoolInfo.facilities.map((facility, index) => (
+            {defaultSchoolInfo.facilities.map((facility, index) => (
               <div key={index} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                   <div className="text-green-600 text-xl">✓</div>
@@ -139,7 +139,7 @@ const Home = () => {
             <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src="/assets/school_galeri1.jpg"
+                  src="/assets/school_galeri6.jpg"
                   alt="Gambar 1"
                   className="w-full h-full object-cover"
                 />
@@ -168,7 +168,7 @@ const Home = () => {
             <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src="/assets/school_galeri3.jpg"
+                  src="/assets/school_galeri1.jpg"
                   alt="Gambar 3"
                   className="w-full h-full object-cover"
                 />
@@ -210,7 +210,7 @@ const Home = () => {
             <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src="/assets/school_galeri6.jpg"
+                  src="/assets/school_galeri3.jpg"
                   alt="Gambar 6"
                   className="w-full h-full object-cover"
                 />
@@ -281,7 +281,7 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-slate-700 text-center">
-            <p>&copy; 2024 SDN 1 Sabahbalau.</p>
+            <p>&copy; 2024 {defaultSchoolInfo.name}.</p>
           </div>
         </div>
       </footer>

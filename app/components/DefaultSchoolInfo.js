@@ -2,9 +2,9 @@ export const defaultSchoolInfo = {
     name: "SD Negeri 1 SabahBalau",
     description: "Mendidik generasi masa depan dengan nilai-nilai unggul, kreativitas, dan inovasi. Kami berkomitmen untuk memberikan pendidikan berkualitas yang membentuk karakter siswa.",
     stats: [
-        { label: "Siswa Aktif", value: "1,200+" },
-        { label: "Guru & Staff", value: "100+" },
-        { label: "Program Unggulan", value: "15+" },
+        { label: "Siswa Aktif", value: "230+" },
+        { label: "Guru & Staff", value: "20+" },
+        { label: "Program Unggulan", value: "5+" },
         { label: "Prestasi", value: "50+" }
     ],
     facilities: [

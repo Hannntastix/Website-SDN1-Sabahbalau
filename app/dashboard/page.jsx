@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
-import { saveSchoolInfo, getSchoolInfo } from "../../utlis/localStorage"
+import { saveSchoolInfo, getSchoolInfo } from "../../utlis/LocalStorage"
 import { defaultSchoolInfo } from "../components/DefaultSchoolInfo"
 import LoadingModal from '../components/ui/LoadingModal';
 

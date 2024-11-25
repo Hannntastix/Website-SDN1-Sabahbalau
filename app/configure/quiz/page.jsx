@@ -790,6 +790,11 @@ const QuizApp = () => {
             }));
         };
 
+        // Add function to check if all questions are answered
+        const areAllQuestionsAnswered = () => {
+            return currentQuiz.questions.every((_, index) => userAnswers[index] !== undefined);
+        };
+
         const progress = ((currentQuestion + 1) / currentQuiz.questions.length) * 100;
 
         const isTimeWarning = timeLeft < 300;
@@ -898,7 +903,12 @@ const QuizApp = () => {
                                                 saveQuizScore(currentQuiz._id, score);
                                                 setPage('results');
                                             }}
-                                            className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+                                            disabled={!areAllQuestionsAnswered()}
+                                            className={`flex items-center gap-2 ${areAllQuestionsAnswered()
+                                                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                                                    : 'bg-green-600 cursor-not-allowed text-white'
+                                                }`}
+                                            title={!areAllQuestionsAnswered() ? "Harap jawab semua pertanyaan terlebih dahulu" : ""}
                                         >
                                             Submit
                                             <ArrowRight className="w-4 h-4" />
@@ -954,14 +964,6 @@ const QuizApp = () => {
         useEffect(() => {
             setScore(Math.round(score));
         }, [score, setScore]);
-
-        // const scoreMessage = score === 100
-        //     ? "Perfect Score! Amazing job! 🎉"
-        //     : score >= 80
-        //         ? "Great job! Very well done! 🌟"
-        //         : score >= 60
-        //             ? "Good effort! Keep practicing! 💪"
-        //             : "Keep learning! You'll do better next time! 📚";
 
         const scoreMessage = score === 100
             ? "Wow, kamu dapat nilai 100! Kamu hebat sekali! 🎉"

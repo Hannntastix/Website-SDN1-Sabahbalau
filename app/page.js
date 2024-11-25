@@ -7,7 +7,7 @@ import LoadingModal from './components/ui/LoadingModal';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { useRouter } from 'next/navigation';
 import LoginModal from './components/ui/LoginModal';
-import MyMap from './components/MyMap';
+import dynamic from 'next/dynamic';
 
 const Home = () => {
   const [schoolInfo, setSchoolInfo] = useState(defaultSchoolInfo);
@@ -15,6 +15,15 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { user } = useKindeBrowserClient();
+
+  const Map = dynamic(() => import('./components/MyMap'), {
+    ssr: false,
+    loading: () => (
+      <div className='h-[500px] w-[80%] mx-auto bg-gray-100 animate-pulse flex items-center justify-center'>
+        Loading Map...
+      </div>
+    )
+  });
 
   const router = useRouter();
 
@@ -127,15 +136,91 @@ const Home = () => {
         <div className="max-w-7xl mx-auto md:px-4 px-2">
           <h2 className="text-3xl font-bold text-center mb-12 text-zinc-600 ">Galeri Sekolah</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((_, index) => (
-              <div key={index} className="aspect-video bg-slate-200 rounded-lg overflow-hidden">
+            <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src={`/assets/school_galeri1.jpg`}
-                  alt={`Aktivitas Sekolah ${index + 1}`}
+                  src="/assets/school_galeri1.jpg"
+                  alt="Gambar 1"
                   className="w-full h-full object-cover"
                 />
               </div>
-            ))}
+              <div className="flex justify-center mt-4">
+                <span className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  Ruangan Kelas Yang Layak
+                </span>
+              </div>
+            </div>
+
+            <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                <img
+                  src="/assets/school_galeri2.jpg"
+                  alt="Gambar 2"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <span className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  Lapangan Sekolah Serbaguna
+                </span>
+              </div>
+            </div>
+            <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                <img
+                  src="/assets/school_galeri3.jpg"
+                  alt="Gambar 3"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <span className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  Kantin Sekolah
+                </span>
+              </div>
+            </div>
+            <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                <img
+                  src="/assets/school_galeri4.jpg"
+                  alt="Gambar 4"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <span className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  Perpustakaan
+                </span>
+              </div>
+            </div>
+            <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                <img
+                  src="/assets/school_galeri5.jpg"
+                  alt="Gambar 5"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <span className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  Musholla Sekolah
+                </span>
+              </div>
+            </div>
+            <div className="max-w-max mx-auto bg-gray-100 p-4 rounded-lg shadow-md">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
+                <img
+                  src="/assets/school_galeri6.jpg"
+                  alt="Gambar 6"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <span className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  Prestasi Anak Murid SDN 1 Sabahbalau
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -150,7 +235,7 @@ const Home = () => {
           </p>
         </div>
         <div className="mt-8 w-full max-w-3xl">
-          <MyMap />
+          <Map />
         </div>
       </div>
 

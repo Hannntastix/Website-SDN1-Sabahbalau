@@ -17,7 +17,6 @@ const MyMap = () => {
         });
 
         L.marker([-5.3839064, 105.3249889], { icon: customIcon }).addTo(map)
-            .bindPopup('A pretty CSS popup.<br> Easily customizable.')
             .openPopup();
 
         return () => {

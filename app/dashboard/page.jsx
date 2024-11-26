@@ -120,7 +120,7 @@ const SchoolWebsiteDashboard = () => {
             <div>
               <label className="block mb-2">Nama Sekolah</label>
               <Input
-                value={schoolInfo.name}
+                value={defaultSchoolInfo.name}
                 onChange={handleUpdateName}
                 className="w-full"
               />
@@ -128,7 +128,7 @@ const SchoolWebsiteDashboard = () => {
             <div>
               <label className="block mb-2">Deskripsi Sekolah</label>
               <Textarea
-                value={schoolInfo.description}
+                value={defaultSchoolInfo.description}
                 onChange={handleUpdateDescription}
                 className="w-full"
                 rows={4}
@@ -145,7 +145,7 @@ const SchoolWebsiteDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
-            {schoolInfo.stats.map((stat, index) => (
+            {defaultSchoolInfo.stats.map((stat, index) => (
               <div key={index} className="space-y-2">
                 <label className="block">Label</label>
                 <Input
@@ -171,7 +171,7 @@ const SchoolWebsiteDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {schoolInfo.facilities.map((facility, index) => (
+            {defaultSchoolInfo.facilities.map((facility, index) => (
               <div key={index} className="flex space-x-4">
                 <Input
                   value={facility}
@@ -181,7 +181,7 @@ const SchoolWebsiteDashboard = () => {
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    const newFacilities = schoolInfo.facilities.filter((_, i) => i !== index);
+                    const newFacilities = defaultSchoolInfo.facilities.filter((_, i) => i !== index);
                     setSchoolInfo(prev => ({
                       ...prev,
                       facilities: newFacilities
@@ -212,7 +212,7 @@ const SchoolWebsiteDashboard = () => {
                 <div>
                   <label>Alamat</label>
                   <Input
-                    value={schoolInfo.contact.address}
+                    value={defaultSchoolInfo.contact.address}
                     onChange={(e) => handleUpdateContact('address', e.target.value)}
                     className="mt-2"
                   />
@@ -220,7 +220,7 @@ const SchoolWebsiteDashboard = () => {
                 <div>
                   <label>Kota</label>
                   <Input
-                    value={schoolInfo.contact.city}
+                    value={defaultSchoolInfo.contact.city}
                     onChange={(e) => handleUpdateContact('city', e.target.value)}
                     className="mt-2"
                   />
@@ -228,7 +228,7 @@ const SchoolWebsiteDashboard = () => {
                 <div>
                   <label>Telepon</label>
                   <Input
-                    value={schoolInfo.contact.phone}
+                    value={defaultSchoolInfo.contact.phone}
                     onChange={(e) => handleUpdateContact('phone', e.target.value)}
                     className="mt-2"
                   />
@@ -236,7 +236,7 @@ const SchoolWebsiteDashboard = () => {
                 <div>
                   <label>Email</label>
                   <Input
-                    value={schoolInfo.contact.email}
+                    value={defaultSchoolInfo.contact.email}
                     onChange={(e) => handleUpdateContact('email', e.target.value)}
                     className="mt-2"
                   />
@@ -249,7 +249,7 @@ const SchoolWebsiteDashboard = () => {
                 <div>
                   <label>Senin - Jumat</label>
                   <Input
-                    value={schoolInfo.operationalHours.weekdays}
+                    value={defaultSchoolInfo.operationalHours.weekdays}
                     onChange={(e) => handleUpdateOperationalHours('weekdays', e.target.value)}
                     className="mt-2"
                   />
@@ -257,7 +257,7 @@ const SchoolWebsiteDashboard = () => {
                 <div>
                   <label>Sabtu</label>
                   <Input
-                    value={schoolInfo.operationalHours.saturday}
+                    value={defaultSchoolInfo.operationalHours.saturday}
                     onChange={(e) => handleUpdateOperationalHours('saturday', e.target.value)}
                     className="mt-2"
                   />
@@ -265,7 +265,7 @@ const SchoolWebsiteDashboard = () => {
                 <div>
                   <label>Minggu</label>
                   <Input
-                    value={schoolInfo.operationalHours.sunday}
+                    value={defaultSchoolInfo.operationalHours.sunday}
                     onChange={(e) => handleUpdateOperationalHours('sunday', e.target.value)}
                     className="mt-2"
                   />

@@ -68,13 +68,13 @@ export default function RemoveBtn({ id }) {
                                 handleDeleteQuiz();
                                 closeModal();
                             }}
-                            className={buttonVariants()}
+                            className="bg-gray-100 text-blue-800 px-4 py-2 rounded hover:bg-red-500 hover:text-white w-[50%]"
                         >
                             Ya
                         </Button>
                         <Button
                             onClick={closeModal}
-                            className="bg-gray-300 text-blue-800 px-4 py-2 rounded hover:bg-gray-500"
+                            className="bg-blue-800 w-[50%]"
                         >
                             Tidak
                         </Button>

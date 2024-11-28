@@ -16,6 +16,14 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { user } = useKindeBrowserClient();
 
+  const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+  if(user) {
+    console.log("ini adalah user")
+  } else {
+    console.log("ini bukan user")
+  }
+
   const Map = dynamic(() => import('./components/MyMap'), {
     ssr: false,
     loading: () => (
@@ -59,6 +67,9 @@ const Home = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  const isUser = user;
+  console.log({ user }, `admin: ${isAdmin}`)
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -260,7 +271,7 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h3 className="text-xl font-semibold mb-4">Kontak</h3>
-              <p>Jl. Jl. M. Azizy, Sabah Balau, Kec. Tj. Bintang</p>
+              <p>Jl. M. Azizy, Sabah Balau, Kec. Tj. Bintang</p>
               <p>Kota Lampung Selatan, 35365</p>
               <p>Telp: (+62)85810355240</p>
               <p>Email: sdn1sabahbalau@yahoo.co.id</p>

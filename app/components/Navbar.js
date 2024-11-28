@@ -1,11 +1,12 @@
 import { buttonVariants } from '../../components/ui/button'
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
+import { RegisterLink, LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import Link from 'next/link'
 import React from 'react'
 
 
 const Navbar = async () => {
-    const { getUser } = getKindeServerSession()
+    const { getUser, isAuthenticated } = getKindeServerSession()
     const user = await getUser()
     const isAdmin = user?.email === process.env.ADMIN_EMAIL
 
@@ -23,7 +24,7 @@ const Navbar = async () => {
 
 
                     <div className='mt-5 grid grid-cols-3 gap-4 md:mt-0 md:flex-row md:flex sm:items-center'>
-                        {user ? (
+                        {(await isAuthenticated()) ? (
                             <>
                                 {isAdmin ?
                                     <>
@@ -42,12 +43,12 @@ const Navbar = async () => {
                                 })}>
                                     Home
                                 </Link>
-                                <Link href="/api/auth/logout" className={buttonVariants({
+                                <LogoutLink className={buttonVariants({
                                     size: "sm",
                                     variant: "ghost",
                                 })}>
                                     Sign Out
-                                </Link>
+                                </LogoutLink>
                             </>
                         ) : (
                             <>
@@ -60,22 +61,71 @@ const Navbar = async () => {
 
                                 <div className='h-8 w-px bg-zinc-200 hidden md:block' />
 
-                                <Link href='/api/auth/register' className={buttonVariants({
+                                <LoginLink className={buttonVariants({
+                                    size: "sm",
+                                    variant: "ghost",
+                                })}>
+                                    Sign in
+                                </LoginLink>
+                                <RegisterLink className={buttonVariants({
                                     size: 'sm',
                                     variant: 'ghost',
                                 })}>
-                                    Sign up
-                                </Link>
-
-                                <Link href='/api/auth/login' className={buttonVariants({
-                                    size: 'sm',
-                                    variant: 'ghost',
-                                })}>
-                                    Sign In
-                                </Link>
-
+                                    Sign Up
+                                </RegisterLink>
                             </>
                         )}
+                        {/* {user ? (
+                            <>
+                                {isAdmin ?
+                                    <>
+                                        <Link href="/dashboard" className={buttonVariants({
+                                            size: "sm",
+                                            variant: "ghost",
+                                        })}>
+                                            Dashboard
+                                        </Link>
+                                    </>
+                                    : null}
+                                <div className='h-8 w-px bg-zinc-200 hidden md:block' />
+                                <Link href="/" className={buttonVariants({
+                                    size: "sm",
+                                    variant: "ghost",
+                                })}>
+                                    Home
+                                </Link>
+                                <LogoutLink className={buttonVariants({
+                                    size: "sm",
+                                    variant: "ghost",
+                                })}>
+                                    Sign Out
+                                </LogoutLink>
+                            </>
+                        ) : (
+                            <>
+                                <Link href="/" className={buttonVariants({
+                                    size: "sm",
+                                    variant: "ghost",
+                                })}>
+                                    Home
+                                </Link>
+
+                                <div className='h-8 w-px bg-zinc-200 hidden md:block' />
+
+                                <LoginLink className={buttonVariants({
+                                    size: "sm",
+                                    variant: "ghost",
+                                })}>
+                                    Sign in
+                                </LoginLink>
+                                <RegisterLink className={buttonVariants({
+                                    size: 'sm',
+                                    variant: 'ghost',
+                                })}>
+                                    Sign Up
+                                </RegisterLink>
+                            </>
+                        )} */}
                     </div>
                 </div>
             </div>

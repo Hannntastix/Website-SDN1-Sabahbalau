@@ -512,7 +512,7 @@ const QuizApp = () => {
             }
 
             try {
-                const res = await fetch("http://localhost:3000/api/quiz", {
+                const res = await fetch("https://website-sdn-1-sabahbalau.vercel.app/api/quiz", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

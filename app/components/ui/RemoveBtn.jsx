@@ -23,7 +23,7 @@ export default function RemoveBtn({ id }) {
     }, [isModalOpen]);
 
     const handleDeleteQuiz = async () => {
-        const res = await fetch(`http://localhost:3000/api/quiz?id=${id}`, {
+        const res = await fetch(`https://website-sdn-1-sabahbalau.vercel.app/api/quiz?id=${id}`, {
             method: "DELETE",
         });
 

@@ -52,7 +52,7 @@ Proyek ini dilisensikan di bawah [MIT License](./LICENSE).
 
 Jika Anda memiliki pertanyaan atau masukan mengenai proyek ini, silakan hubungi kami di:
 
-Instagram: @m.raihanathalahilham
+Instagram: @m.raihanathalah
 
 Email: rehan121203@gmail.com
 <!-- - **Email**: sdn1sabahbalau@example.com -->

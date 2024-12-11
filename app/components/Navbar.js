@@ -26,7 +26,7 @@ const Navbar = async () => {
                     <div className='mt-5 grid grid-cols-3 gap-4 md:mt-0 md:flex-row md:flex sm:items-center'>
                         {(await isAuthenticated()) ? (
                             <>
-                                {isAdmin ?
+                                {/* {isAdmin ?
                                     <>
                                         <Link href="/dashboard" className={buttonVariants({
                                             size: "sm",
@@ -35,7 +35,7 @@ const Navbar = async () => {
                                             Dashboard
                                         </Link>
                                     </>
-                                    : null}
+                                    : null} */}
                                 <div className='h-8 w-px bg-zinc-200 hidden md:block' />
                                 <Link href="/" className={buttonVariants({
                                     size: "sm",

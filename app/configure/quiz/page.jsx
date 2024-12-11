@@ -391,6 +391,17 @@ const QuizApp = () => {
         )
     };
 
+    {/* 
+               <>
+            {user ? (
+                <>
+                    
+                </>
+            ) : (
+                <NotFound />
+            )}
+        </> 
+                */}
     // Create Quiz Page Component
     const CreateQuestion = () => {
 

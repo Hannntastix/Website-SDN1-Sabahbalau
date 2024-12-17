@@ -115,7 +115,7 @@ export default function SchoolInfoManagement({
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/dashboard/${id}`, {
+      const response = await fetch(`https://website-sdn-1-sabahbalau.vercel.app/api/dashboard/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

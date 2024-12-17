@@ -1,14 +1,15 @@
-import { buttonVariants } from '../../components/ui/button'
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
+import { buttonVariants } from '../../components/ui/button';
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { RegisterLink, LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import Link from 'next/link'
-import React from 'react'
-
+import Link from 'next/link';
+import React from 'react';
+import DashboardBtn from './DashboardBtn';
 
 const Navbar = async () => {
-    const { getUser, isAuthenticated } = getKindeServerSession()
-    const user = await getUser()
-    const isAdmin = user?.email === process.env.ADMIN_EMAIL
+
+    const { getUser, isAuthenticated } = getKindeServerSession();
+    const user = await getUser();
+    const isAdmin = user?.email === process.env.ADMIN_EMAIL;
 
     return (
         <nav className='sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-200 shadow-sm'>
@@ -26,65 +27,9 @@ const Navbar = async () => {
                     <div className='mt-5 grid grid-cols-3 gap-4 md:mt-0 md:flex-row md:flex sm:items-center'>
                         {(await isAuthenticated()) ? (
                             <>
-                                {/* {isAdmin ?
-                                    <>
-                                        <Link href="/dashboard" className={buttonVariants({
-                                            size: "sm",
-                                            variant: "ghost",
-                                        })}>
-                                            Dashboard
-                                        </Link>
-                                    </>
-                                    : null} */}
-                                <div className='h-8 w-px bg-zinc-200 hidden md:block' />
-                                <Link href="/" className={buttonVariants({
-                                    size: "sm",
-                                    variant: "ghost",
-                                })}>
-                                    Home
-                                </Link>
-                                <LogoutLink className={buttonVariants({
-                                    size: "sm",
-                                    variant: "ghost",
-                                })}>
-                                    Sign Out
-                                </LogoutLink>
-                            </>
-                        ) : (
-                            <>
-                                <Link href="/" className={buttonVariants({
-                                    size: "sm",
-                                    variant: "ghost",
-                                })}>
-                                    Home
-                                </Link>
-
-                                <div className='h-8 w-px bg-zinc-200 hidden md:block' />
-
-                                <LoginLink className={buttonVariants({
-                                    size: "sm",
-                                    variant: "ghost",
-                                })}>
-                                    Sign in
-                                </LoginLink>
-                                <RegisterLink className={buttonVariants({
-                                    size: 'sm',
-                                    variant: 'ghost',
-                                })}>
-                                    Sign Up
-                                </RegisterLink>
-                            </>
-                        )}
-                        {/* {user ? (
-                            <>
                                 {isAdmin ?
                                     <>
-                                        <Link href="/dashboard" className={buttonVariants({
-                                            size: "sm",
-                                            variant: "ghost",
-                                        })}>
-                                            Dashboard
-                                        </Link>
+                                        <DashboardBtn />
                                     </>
                                     : null}
                                 <div className='h-8 w-px bg-zinc-200 hidden md:block' />
@@ -125,7 +70,7 @@ const Navbar = async () => {
                                     Sign Up
                                 </RegisterLink>
                             </>
-                        )} */}
+                        )}
                     </div>
                 </div>
             </div>
